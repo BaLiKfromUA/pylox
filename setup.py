@@ -32,7 +32,7 @@ def read_requirements(path):
 setup(
     name="pylox",
     version=read("pylox", "VERSION"),
-    description="Awesome pylox created by BaLiKfromUA",
+    description="Yet another Python implementation of Lox programming language",
     url="https://github.com/BaLiKfromUA/pylox/",
     long_description=read("README.md"),
     long_description_content_type="text/markdown",
