@@ -33,15 +33,15 @@ def test_if_keyword_scanning_is_valid() -> None:
 
     for ind in range(15):
         assert (
-                str(tokens[ind].token_type)
-                == f"TokenType.{expected_token_lexemes[ind].upper()}"
+            str(tokens[ind].token_type)
+            == f"TokenType.{expected_token_lexemes[ind].upper()}"
         )
         assert tokens[ind].lexeme == expected_token_lexemes[ind]
 
 
 def test_if_numbers_scanning_is_valid() -> None:
     # GIVEN
-    src = '''
+    src = """
     123
     123.456
     .456
@@ -54,7 +54,7 @@ def test_if_numbers_scanning_is_valid() -> None:
     // expect: NUMBER 123 123.0
     // expect: DOT . null
     // expect: EOF  null
-    '''
+    """
 
     # WHEN
     tokens = Scanner(src).scan_tokens()
@@ -76,14 +76,14 @@ def test_if_numbers_scanning_is_valid() -> None:
 # todo: test escape sequences
 def test_if_strings_scanning_is_valid() -> None:
     # GIVEN
-    src = '''
+    src = """
     ""
     "string"
 
     // expect: STRING "" 
     // expect: STRING "string" string
     // expect: EOF  null
-    '''
+    """
 
     # WHEN
     tokens = Scanner(src).scan_tokens()
@@ -100,11 +100,27 @@ def test_if_strings_scanning_is_valid() -> None:
 def test_if_punctuators_scanning_is_valid() -> None:
     # GIVEN
     src = "(){};,+-*!===<=>=!=<>/."
-    expected_token_types = [TokenType.LEFT_PAREN, TokenType.RIGHT_PAREN, TokenType.LEFT_BRACE, TokenType.RIGHT_BRACE,
-                            TokenType.SEMICOLON, TokenType.COMMA, TokenType.PLUS, TokenType.MINUS, TokenType.STAR,
-                            TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL, TokenType.LESS_EQUAL,
-                            TokenType.GREATER_EQUAL, TokenType.BANG_EQUAL, TokenType.LESS, TokenType.GREATER,
-                            TokenType.SLASH, TokenType.DOT, TokenType.EOF]
+    expected_token_types = [
+        TokenType.LEFT_PAREN,
+        TokenType.RIGHT_PAREN,
+        TokenType.LEFT_BRACE,
+        TokenType.RIGHT_BRACE,
+        TokenType.SEMICOLON,
+        TokenType.COMMA,
+        TokenType.PLUS,
+        TokenType.MINUS,
+        TokenType.STAR,
+        TokenType.BANG_EQUAL,
+        TokenType.EQUAL_EQUAL,
+        TokenType.LESS_EQUAL,
+        TokenType.GREATER_EQUAL,
+        TokenType.BANG_EQUAL,
+        TokenType.LESS,
+        TokenType.GREATER,
+        TokenType.SLASH,
+        TokenType.DOT,
+        TokenType.EOF,
+    ]
 
     # WHEN
     tokens = Scanner(src).scan_tokens()
@@ -118,7 +134,7 @@ def test_if_punctuators_scanning_is_valid() -> None:
 
 def test_if_whitespace_is_ignored() -> None:
     # GIVEN
-    src = '''
+    src = """
     space    tabs				newlines
 
 
@@ -131,7 +147,7 @@ def test_if_whitespace_is_ignored() -> None:
     // expect: IDENTIFIER newlines null
     // expect: IDENTIFIER end null
     // expect: EOF  null
-    '''
+    """
 
     # WHEN
     tokens = Scanner(src).scan_tokens()

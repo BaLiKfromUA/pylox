@@ -62,9 +62,9 @@ class Scanner:
         return self.tokens
 
     def add_token(
-            self, token_type: TokenType, literal: typing.Any = None
+        self, token_type: TokenType, literal: typing.Any = None
     ) -> None:
-        text = self.src[self.start: self.current]
+        text = self.src[self.start : self.current]
         self.tokens.append(Token(token_type, text, literal, self.line))
 
     def is_at_end(self) -> bool:
@@ -163,7 +163,7 @@ class Scanner:
             self.advance()
 
         # If the lexeme does not match a reserved keyword, then it is considered an identifier
-        lexeme = self.src[self.start: self.current]
+        lexeme = self.src[self.start : self.current]
         token_type = RESERVED.get(lexeme, TokenType.IDENTIFIER)
 
         self.add_token(token_type)
@@ -179,7 +179,7 @@ class Scanner:
             while self.peek().isdigit():
                 self.advance()
 
-        literal = self.src[self.start: self.current]
+        literal = self.src[self.start : self.current]
         self.add_token(
             TokenType.NUMBER, float(literal) if is_float else int(literal)
         )
@@ -197,5 +197,5 @@ class Scanner:
         self.advance()
 
         # Trim the surrounding quotes.
-        value = self.src[self.start + 1: self.current - 1]
+        value = self.src[self.start + 1 : self.current - 1]
         self.add_token(TokenType.STRING, value)
