@@ -1,28 +1,65 @@
-"""CLI interface for pylox project.
+import sys
+import typing as t
+from pathlib import Path
 
-Be creative! do whatever you want!
+import typer
+from rich import print
+from rich.prompt import Prompt
 
-- Install click or typer and create a CLI app
-- Use builtin argparse
-- Start a web application
-- Import things from your .base module
-"""
+from pylox.error import LoxException, LoxRuntimeError
+
+pylox_cli = typer.Typer()
+Prompt.prompt_suffix = ""  # Get rid of the default colon suffix
 
 
-def main():  # pragma: no cover
-    """
-    The main function executes on commands:
-    `python -m pylox` and `$ pylox `.
+class Lox:
+    def __init__(self) -> None:
+        self.had_error = False
+        self.had_runtime_error = False
 
-    This is your program's entry point.
+    def run_file(self, src_filepath: Path) -> None:
+        src = src_filepath.read_text()
+        self.run(src)
 
-    You can change this function to do whatever you want.
-    Examples:
-        * Run a test suite
-        * Run a server
-        * Do some other stuff
-        * Run a command line application (Click, Typer, ArgParse)
-        * List all available tasks
-        * Run an application (Flask, FastAPI, Django, etc.)
-    """
-    print("This will do something")
+        if self.had_error:
+            sys.exit(65)
+
+        if self.had_runtime_error:
+            sys.exit(70)
+
+    def run_prompt(self) -> None:
+        while True:
+            line = Prompt.ask("> ")
+
+            if line == "exit":
+                break
+
+            self.run(line)
+
+            # Reset these so we can stay in the REPL unhindered
+            self.had_error = False
+            self.had_runtime_error = False
+
+    def run(self, src: str) -> None:
+        pass
+
+    def _build_error_string(self, err: LoxException) -> str:
+        return f"{err.line + 1}: [bold red]{err}[/bold red]"
+
+    def report_error(self, err: LoxException) -> None:
+        print(self._build_error_string(err))
+        self.had_error = True
+
+    def report_runtime_error(self, err: LoxRuntimeError) -> None:
+        print(self._build_error_string(err))
+        self.had_error = True
+        self.had_runtime_error = True
+
+
+@pylox_cli.command()
+def main(lox_script: t.Optional[Path] = typer.Argument(default=None)) -> None:
+    lox = Lox()
+    if not lox_script:
+        lox.run_prompt()
+    else:
+        lox.run_file(lox_script)
