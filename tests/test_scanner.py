@@ -1,3 +1,6 @@
+import pytest
+
+from pylox.error import LoxSyntaxError
 from pylox.scanner import Scanner
 from pylox.tokens import TokenType
 
@@ -158,3 +161,48 @@ def test_if_whitespace_is_ignored() -> None:
 
     for i in range(4):
         assert tokens[i].token_type == TokenType.IDENTIFIER
+
+
+def test_if_multiline_comments_works() -> None:
+    # GIVEN
+    src = """
+    /* simple one line */ // test simple comment
+    "hello"
+    /* /* nesting */ */
+    
+    /* */ /* /* /* */ */ */
+    "world"
+    
+    // hey
+    """
+    # WHEN
+    tokens = Scanner(src).scan_tokens()
+
+    # THEN
+    assert len(tokens) == 3
+    assert tokens[-1].token_type == TokenType.EOF
+    assert tokens[0].token_type == tokens[1].token_type == TokenType.STRING
+
+    assert tokens[0].literal == "hello"
+    assert tokens[1].literal == "world"
+
+
+def test_if_unterminated_string_produces_error() -> None:
+    src = '"hello" "world!'
+
+    with pytest.raises(LoxSyntaxError):
+        Scanner(src).scan_tokens()
+
+
+def test_if_unknown_symbol_produces_error() -> None:
+    src = "%"
+
+    with pytest.raises(LoxSyntaxError):
+        Scanner(src).scan_tokens()
+
+
+def test_if_unclosed_multiline_comment_produces_error() -> None:
+    src = "/* /* */ //"
+
+    with pytest.raises(LoxSyntaxError):
+        Scanner(src).scan_tokens()

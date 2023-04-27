@@ -139,6 +139,8 @@ class Scanner:
                 if self.match("/"):
                     while self.peek() != "\n" and not self.is_at_end():
                         self.advance()
+                elif self.match("*"):
+                    self.multiline_comment()
                 else:
                     self.add_token(TokenType.SLASH)
             case " " | "\r" | "\t":
@@ -199,3 +201,27 @@ class Scanner:
         # Trim the surrounding quotes.
         value = self.src[self.start + 1 : self.current - 1]
         self.add_token(TokenType.STRING, value)
+
+    def multiline_comment(self):
+        depth = 1
+
+        while depth != 0:
+            if self.is_at_end():
+                # Unterminated block comment
+                raise LoxSyntaxError(
+                    self.line,
+                    "Unterminated block comment.",
+                )
+
+            if self.peek() == "*" and self.peek_next() == "/":
+                depth -= 1
+                self.advance()
+                self.advance()
+            elif self.peek() == "/" and self.peek_next() == "*":
+                depth += 1
+                self.advance()
+                self.advance()
+            else:
+                if self.peek() == "\n":
+                    self.line += 1
+                self.advance()
