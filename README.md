@@ -9,9 +9,9 @@ I'm doing this because:
 3. I want to become more "fluent" with Python and its dev infrastructure.
 4. Fun.
 
-## Completed challenges
+## Challenges
 
-// todo:
+- [X] Add support to Lox’s scanner for C-style /* ... */ block comments. Make sure to handle newlines in them. Consider allowing them to nest. [Solution](https://github.com/BaLiKfromUA/pylox/commit/4728a19b990c8e08f5a9d441b4caa59a825f1325)
 
 ## My own design/implementation decisions
 

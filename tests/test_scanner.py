@@ -36,8 +36,8 @@ def test_if_keyword_scanning_is_valid() -> None:
 
     for ind in range(15):
         assert (
-            str(tokens[ind].token_type)
-            == f"TokenType.{expected_token_lexemes[ind].upper()}"
+                str(tokens[ind].token_type)
+                == f"TokenType.{expected_token_lexemes[ind].upper()}"
         )
         assert tokens[ind].lexeme == expected_token_lexemes[ind]
 
@@ -194,7 +194,7 @@ def test_if_unterminated_string_produces_error() -> None:
         Scanner(src).scan_tokens()
 
 
-def test_if_unknown_symbol_produces_error() -> None:
+def test_if_unknown_character_produces_error() -> None:
     src = "%"
 
     with pytest.raises(LoxSyntaxError):
