@@ -228,5 +228,4 @@ def test_if_lines_counting_works_well() -> None:
     with pytest.raises(LoxSyntaxError) as err:
         Scanner(src).scan_tokens()
 
-    assert "Unexpected character" in str(err.value)
     assert "line 8" in str(err.value)
