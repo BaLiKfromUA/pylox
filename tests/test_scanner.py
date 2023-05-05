@@ -190,19 +190,43 @@ def test_if_multiline_comments_works() -> None:
 def test_if_unterminated_string_produces_error() -> None:
     src = '"hello" "world!'
 
-    with pytest.raises(LoxSyntaxError):
+    with pytest.raises(LoxSyntaxError) as err:
         Scanner(src).scan_tokens()
+
+    assert "Unterminated string." in str(err.value)
 
 
 def test_if_unknown_character_produces_error() -> None:
     src = "%"
 
-    with pytest.raises(LoxSyntaxError):
+    with pytest.raises(LoxSyntaxError) as err:
         Scanner(src).scan_tokens()
+
+    assert "Unexpected character" in str(err.value)
 
 
 def test_if_unclosed_multiline_comment_produces_error() -> None:
     src = "/* /* */ //"
 
-    with pytest.raises(LoxSyntaxError):
+    with pytest.raises(LoxSyntaxError) as err:
         Scanner(src).scan_tokens()
+
+    assert "Unterminated block comment." in str(err.value)
+
+
+def test_if_lines_counting_works_well() -> None:
+    src = '''// line = 1
+    line = 2
+    line = 3
+    // line = 4
+    /* line = 5 */
+    /* line = 6
+       line = 7 */
+    % // line = 8
+    '''
+
+    with pytest.raises(LoxSyntaxError) as err:
+        Scanner(src).scan_tokens()
+
+    assert "Unexpected character" in str(err.value)
+    assert "line 8" in str(err.value)
