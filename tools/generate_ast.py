@@ -5,13 +5,15 @@ def define_ast(base_name, types):
     # TODO: Add output directory handling
     path = "../pylox/" + base_name.lower() + ".py"
     file = open(path, "w")
-
+    # HEADER
     file.write("# THIS CODE IS GENERATED AUTOMATICALLY. DO NOT CHANGE IT MANUALLY!\n\n")
-
+    # IMPORTS
     file.write('import typing\n')
     file.write('from abc import ABC, abstractmethod\n\n')
     file.write('from pylox.tokens import Token\n')
+    # VISITOR
     define_visitor(file, base_name, types)
+    # BASE CLASS
     file.write(f'class {base_name}:\n')
     file.write(f'{TAB}def __init__(self):\n')
     file.write(f'{TAB * 2}pass\n')
@@ -19,6 +21,7 @@ def define_ast(base_name, types):
     file.write(f'{TAB}def accept(self, visitor : {base_name}Visitor):\n')
     file.write(f'{TAB * 2}pass')
     file.write('\n')
+    # IMPLEMENTATIONS
     for className, fields in types.items():
         file.write('\n')
         define_type(file, base_name, className, fields)
