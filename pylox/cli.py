@@ -12,7 +12,7 @@ pylox_cli = typer.Typer()
 Prompt.prompt_suffix = ""  # Get rid of the default colon suffix
 
 
-class Lox:
+class Lox:  # pragma: no cover
     def __init__(self) -> None:
         self.had_error = False
         self.had_runtime_error = False
@@ -57,7 +57,7 @@ class Lox:
 
 
 @pylox_cli.command()
-def main(lox_script: t.Optional[Path] = typer.Argument(default=None)) -> None:
+def main(lox_script: t.Optional[Path] = typer.Argument(default=None)) -> None:  # pragma: no cover
     lox = Lox()
     if not lox_script:
         lox.run_prompt()
