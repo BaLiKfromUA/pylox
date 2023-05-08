@@ -193,7 +193,7 @@ def test_if_unterminated_string_produces_error() -> None:
     with pytest.raises(LoxSyntaxError) as err:
         Scanner(src).scan_tokens()
 
-    assert "Unterminated string." in str(err.value)
+    assert "Unterminated string." in err.value.message
 
 
 def test_if_unknown_character_produces_error() -> None:
@@ -202,7 +202,7 @@ def test_if_unknown_character_produces_error() -> None:
     with pytest.raises(LoxSyntaxError) as err:
         Scanner(src).scan_tokens()
 
-    assert "Unexpected character" in str(err.value)
+    assert "Unexpected character" in err.value.message
 
 
 def test_if_unclosed_multiline_comment_produces_error() -> None:
@@ -211,7 +211,7 @@ def test_if_unclosed_multiline_comment_produces_error() -> None:
     with pytest.raises(LoxSyntaxError) as err:
         Scanner(src).scan_tokens()
 
-    assert "Unterminated block comment." in str(err.value)
+    assert "Unterminated block comment." in err.value.message
 
 
 def test_if_lines_counting_works_well() -> None:
@@ -228,4 +228,4 @@ def test_if_lines_counting_works_well() -> None:
     with pytest.raises(LoxSyntaxError) as err:
         Scanner(src).scan_tokens()
 
-    assert "line 8" in str(err.value)
+    assert "8" == str(err.value.line)

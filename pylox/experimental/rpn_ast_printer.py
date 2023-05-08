@@ -17,4 +17,8 @@ class RpnAstPrinter(ast.ExprVisitor):
         return str(expr.value)
 
     def visit_unary_expr(self, expr: ast.Unary):
-        return f"{str(expr.right.accept(self))} {expr.operator.lexeme}"
+        op = expr.operator.lexeme
+        if op == "-":
+            # Can't use same symbol for unary and binary.
+            op = "~"
+        return f"{str(expr.right.accept(self))} {op}"

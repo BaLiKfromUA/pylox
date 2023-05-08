@@ -12,6 +12,7 @@ class Parser:
         self.current = 0
 
     def parse(self) -> ast.Expr:
+        # todo: add error handling
         return self.expression()
 
     # helpers
