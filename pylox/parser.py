@@ -9,7 +9,7 @@ from pylox.scanner import Token, TokenType
 # recursive descent, top-down parser
 class Parser:
     def __init__(
-            self, tokens: List[Token], report_error: Optional[Callable] = None
+        self, tokens: List[Token], report_error: Optional[Callable] = None
     ) -> None:
         self.tokens = tokens
         self.current = 0
@@ -104,10 +104,10 @@ class Parser:
         expr = self.term()
 
         while self.match(
-                TokenType.GREATER,
-                TokenType.GREATER_EQUAL,
-                TokenType.LESS,
-                TokenType.LESS_EQUAL,
+            TokenType.GREATER,
+            TokenType.GREATER_EQUAL,
+            TokenType.LESS,
+            TokenType.LESS_EQUAL,
         ):
             op = self.previous()
             right = self.term()
@@ -162,5 +162,36 @@ class Parser:
             expr = self.expression()
             self.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.")
             return ast.Grouping(expr)
+
+        # Error handling
+        if self.match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL):
+            err = self.error(self.previous(), "Missing left-hand operand.")
+            self.equality()
+            raise err
+
+        if self.match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL):
+            err = self.error(self.previous(), "Missing left-hand operand.")
+            self.equality()
+            raise err
+
+        if self.match(
+            TokenType.GREATER,
+            TokenType.GREATER_EQUAL,
+            TokenType.LESS,
+            TokenType.LESS_EQUAL,
+        ):
+            err = self.error(self.previous(), "Missing left-hand operand.")
+            self.comparison()
+            raise err
+
+        if self.match(TokenType.PLUS):
+            err = self.error(self.previous(), "Missing left-hand operand.")
+            self.term()
+            raise err
+
+        if self.match(TokenType.SLASH, TokenType.STAR):
+            err = self.error(self.previous(), "Missing left-hand operand.")
+            self.factor()
+            raise err
 
         raise self.error(self.peek(), "Expect expression")
