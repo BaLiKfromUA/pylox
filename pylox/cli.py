@@ -8,7 +8,8 @@ from rich import print
 from rich.prompt import Prompt
 from scanner import Scanner
 
-from pylox.error import LoxException, LoxRuntimeError
+from pylox.error import LoxException, LoxRuntimeError, LoxSyntaxError
+from pylox.experimental.ast_printer import AstPrinter
 
 pylox_cli = typer.Typer()
 Prompt.prompt_suffix = ""  # Get rid of the default colon suffix
@@ -43,7 +44,15 @@ class Lox:
             self.had_runtime_error = False
 
     def run(self, src: str) -> None:
-        tokens = Scanner(src).scan_tokens()
+        try:
+            tokens = Scanner(src).scan_tokens()
+            ast = Parser(tokens, self.report_error).parse()
+            if ast is not None:
+                print(AstPrinter().print_expr(ast))  # todo: replace
+        except LoxSyntaxError as e:
+            self.report_error(e)
+        except LoxRuntimeError as e:
+            self.report_runtime_error(e)
 
     @staticmethod
     def _build_error_string(err: LoxException) -> str:

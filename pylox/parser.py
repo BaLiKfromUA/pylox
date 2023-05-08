@@ -1,19 +1,25 @@
-from typing import List
+from typing import Callable, List, Optional
 
 import pylox.expr as ast
 from pylox.error import LoxParseError
+from pylox.expr import Expr
 from pylox.scanner import Token, TokenType
 
 
 # recursive descent, top-down parser
 class Parser:
-    def __init__(self, tokens: List[Token]) -> None:
+    def __init__(
+            self, tokens: List[Token], report_error: Optional[Callable] = None
+    ) -> None:
         self.tokens = tokens
         self.current = 0
+        self.report_error = report_error
 
-    def parse(self) -> ast.Expr:
-        # todo: add error handling
-        return self.expression()
+    def parse(self) -> Optional[Expr]:
+        try:
+            return self.expression()
+        except LoxParseError:
+            return None
 
     # helpers
     def match(self, *token_types: TokenType) -> bool:
@@ -47,7 +53,13 @@ class Parser:
         if self.check(expected):
             return self.advance()
 
-        raise LoxParseError(self.peek(), msg)
+        raise self.error(self.peek(), msg)
+
+    def error(self, token: Token, msg: str) -> LoxParseError:
+        result = LoxParseError(token, msg)
+        if self.report_error is not None:
+            self.report_error(result)
+        return result
 
     def synchronize(self) -> None:
         self.advance()
@@ -92,10 +104,10 @@ class Parser:
         expr = self.term()
 
         while self.match(
-            TokenType.GREATER,
-            TokenType.GREATER_EQUAL,
-            TokenType.LESS,
-            TokenType.LESS_EQUAL,
+                TokenType.GREATER,
+                TokenType.GREATER_EQUAL,
+                TokenType.LESS,
+                TokenType.LESS_EQUAL,
         ):
             op = self.previous()
             right = self.term()
@@ -151,4 +163,4 @@ class Parser:
             self.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.")
             return ast.Grouping(expr)
 
-        raise LoxParseError(self.peek(), "Expect expression")
+        raise self.error(self.peek(), "Expect expression")
