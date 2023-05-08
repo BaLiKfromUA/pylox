@@ -36,8 +36,8 @@ def test_if_keyword_scanning_is_valid() -> None:
 
     for ind in range(15):
         assert (
-                str(tokens[ind].token_type)
-                == f"TokenType.{expected_token_lexemes[ind].upper()}"
+            str(tokens[ind].token_type)
+            == f"TokenType.{expected_token_lexemes[ind].upper()}"
         )
         assert tokens[ind].lexeme == expected_token_lexemes[ind]
 
@@ -215,7 +215,7 @@ def test_if_unclosed_multiline_comment_produces_error() -> None:
 
 
 def test_if_lines_counting_works_well() -> None:
-    src = '''// line = 1
+    src = """// line = 1
     line = 2
     line = 3
     // line = 4
@@ -223,7 +223,7 @@ def test_if_lines_counting_works_well() -> None:
     /* line = 6
        line = 7 */
     % // line = 8
-    '''
+    """
 
     with pytest.raises(LoxSyntaxError) as err:
         Scanner(src).scan_tokens()

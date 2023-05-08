@@ -3,7 +3,6 @@ import pylox.expr as ast
 
 # utility class to test basics of AST
 class AstPrinter(ast.ExprVisitor):
-
     def print_expr(self, expr: ast.Expr):
         return expr.accept(self)
 

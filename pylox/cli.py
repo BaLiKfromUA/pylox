@@ -57,7 +57,9 @@ class Lox:  # pragma: no cover
 
 
 @pylox_cli.command()
-def main(lox_script: t.Optional[Path] = typer.Argument(default=None)) -> None:  # pragma: no cover
+def main(
+    lox_script: t.Optional[Path] = typer.Argument(default=None),
+) -> None:  # pragma: no cover
     lox = Lox()
     if not lox_script:
         lox.run_prompt()
