@@ -20,9 +20,18 @@ I'm doing this because:
 - [ ] Add support for [comma expressions](https://en.wikipedia.org/wiki/Comma_operator). Give them the same precedence
   and associativity as in C. Write the grammar, and then implement the necessary parsing code.
 - [ ] Add support for the C-style conditional or “ternary” operator `?:`
-- [ ] Add error productions to handle each binary operator appearing without a left-hand operand. In other words, detect
+- [X] Add error productions to handle each binary operator appearing without a left-hand operand. In other words, detect
   a binary operator appearing at the beginning of an expression. Report that as an error, but also parse and discard a
-  right-hand operand with the appropriate precedence.
+  right-hand operand with the appropriate
+  precedence. [Solution](https://github.com/BaLiKfromUA/pylox/commit/a36d77449bdb175568ab19fdf92b91ca80e126a8)
+- [ ] Many languages define `+` such that if either operand is a string, the other is converted to a string and the
+  results
+  are then concatenated. For example, `"scone" + 4 `would yield `scone4`. Extend the code in `visitBinaryExpr()` to
+  support that.
+- [ ] What happens right now if you divide a number by zero? What do you think should happen? Justify your choice. How
+  do
+  other languages you know handle division by zero, and why do they make the choices they do?
+  Change the implementation in `visitBinaryExpr()` to detect and report a runtime error for this case.
 
 ## My own design/implementation decisions
 

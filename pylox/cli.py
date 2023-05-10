@@ -1,4 +1,5 @@
 import sys
+import typing
 import typing as t
 from parser import Parser
 from pathlib import Path
@@ -9,7 +10,7 @@ from rich.prompt import Prompt
 from scanner import Scanner
 
 from pylox.error import LoxException, LoxRuntimeError, LoxSyntaxError
-from pylox.experimental.ast_printer import AstPrinter
+from pylox.interpreter import Interpreter
 
 pylox_cli = typer.Typer()
 Prompt.prompt_suffix = ""  # Get rid of the default colon suffix
@@ -17,6 +18,7 @@ Prompt.prompt_suffix = ""  # Get rid of the default colon suffix
 
 class Lox:
     def __init__(self) -> None:
+        self.interpreter = Interpreter()
         self.had_error = False
         self.had_runtime_error = False
 
@@ -48,11 +50,21 @@ class Lox:
             tokens = Scanner(src).scan_tokens()
             ast = Parser(tokens, self.report_error).parse()
             if ast is not None:
-                print(AstPrinter().print_expr(ast))  # todo: replace
+                print(self.stringify(self.interpreter.evaluate(ast)))
         except LoxSyntaxError as e:
             self.report_error(e)
         except LoxRuntimeError as e:
             self.report_runtime_error(e)
+
+    @staticmethod
+    def stringify(value: typing.Any) -> str:
+        if value is None:
+            return "nil"
+
+        if type(value) is float and float(value).is_integer():
+            return str(int(value))
+
+        return str(value)
 
     @staticmethod
     def _build_error_string(err: LoxException) -> str:
