@@ -40,15 +40,12 @@ class Interpreter(ast.ExprVisitor):
                 if self.is_number(left) and self.is_number(right):
                     return float(left) + float(right)
 
-                if type(left) is str and type(right) is str:
-                    return left + right
-
                 if type(left) is str or type(right) is str:
-                    return str(left) + str(right)
+                    return self.stringify(left) + self.stringify(right)
 
                 raise LoxRuntimeError(
                     expr.operator,
-                    "Operands must be numbers or strings.",
+                    "Operands must be two numbers or two strings.",
                 )
             case TokenType.SLASH:
                 self.check_number_operands(expr.operator, left, right)
