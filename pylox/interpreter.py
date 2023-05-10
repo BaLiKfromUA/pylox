@@ -49,6 +49,11 @@ class Interpreter(ast.ExprVisitor):
                 )
             case TokenType.SLASH:
                 self.check_number_operands(expr.operator, left, right)
+                if float(right) == 0:
+                    raise LoxRuntimeError(
+                        expr.operator,
+                        "Division by zero!",
+                    )
                 return float(left) / float(right)
             case TokenType.STAR:
                 self.check_number_operands(expr.operator, left, right)
