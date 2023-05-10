@@ -6,6 +6,9 @@ from pylox.scanner import Token, TokenType
 
 
 class Interpreter(ast.ExprVisitor):
+    def interpret(self, expr: ast.Expr):
+        return self.stringify(self.evaluate(expr))
+
     def evaluate(self, expr: ast.Expr) -> typing.Any:
         return expr.accept(self)
 
@@ -40,9 +43,12 @@ class Interpreter(ast.ExprVisitor):
                 if type(left) is str and type(right) is str:
                     return left + right
 
+                if type(left) is str or type(right) is str:
+                    return str(left) + str(right)
+
                 raise LoxRuntimeError(
                     expr.operator,
-                    "Operands must be two numbers of two strings.",
+                    "Operands must be numbers or strings.",
                 )
             case TokenType.SLASH:
                 self.check_number_operands(expr.operator, left, right)
@@ -96,3 +102,13 @@ class Interpreter(ast.ExprVisitor):
         if Interpreter.is_number(left) and Interpreter.is_number(right):
             return
         raise LoxRuntimeError(op, "Operands must be a numbers.")
+
+    @staticmethod
+    def stringify(value: typing.Any) -> str:
+        if value is None:
+            return "nil"
+
+        if type(value) is float and float(value).is_integer():
+            return str(int(value))
+
+        return str(value)
