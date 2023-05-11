@@ -28,13 +28,30 @@ I'm doing this because:
   results
   are then concatenated. For example, `"scone" + 4 `would yield `scone4`. Extend the code in `visitBinaryExpr()` to
   support that. [Solution](https://github.com/BaLiKfromUA/pylox/commit/b91c23da229ef6c81f30ba6f651d2fa76f8dfa1d)
-- [ ] What happens right now if you divide a number by zero? What do you think should happen? Justify your choice. How
+- [X] What happens right now if you divide a number by zero? What do you think should happen? Justify your choice. How
   do
   other languages you know handle division by zero, and why do they make the choices they do?
-  Change the implementation in `visitBinaryExpr()` to detect and report a runtime error for this case.
+  Change the implementation in `visitBinaryExpr()` to detect and report a runtime error for this
+  case. [Solution](https://github.com/BaLiKfromUA/pylox/commit/bb5dc4117cb5b6a5947a6165aded331735a9bff4)
 
 ## My own design/implementation decisions
 
-// todo:
+- [ ] Compilation to WebAssembly according to [the specification](https://webassembly.github.io/spec/core/index.html).
+- [ ] Support of Lists. For example:
+  ```javascript
+  var list = [1, 2, 3, 4, 5];
+  print list[0]; // 1
+
+  var result = [];
+  for (var i = 0; list[i] != nil; i = i + 1) {
+    result[i] = list[i] * 10;
+  }
+  print result; // [10, 20, 30, 40, 50]
+  ```
+- [ ] Support of Anonymous Functions. For example:
+  ```javascript
+  var list = [1, 2, 3, 4, 5];
+  print map(lambda(num) { return num * num; }, list); // [1, 4, 9, 16, 25]
+  ```
 
 
