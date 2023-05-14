@@ -1,15 +1,15 @@
 import sys
 import typing as t
-from parser import Parser
 from pathlib import Path
 
 import typer
 from rich import print
 from rich.prompt import Prompt
-from scanner import Scanner
 
 from pylox.error import LoxException, LoxRuntimeError, LoxSyntaxError
 from pylox.interpreter import Interpreter
+from pylox.parser import Parser
+from pylox.scanner import Scanner
 
 pylox_cli = typer.Typer()
 Prompt.prompt_suffix = ""  # Get rid of the default colon suffix

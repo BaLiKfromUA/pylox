@@ -1,4 +1,6 @@
 import sys
+from distutils.dir_util import copy_tree
+
 import pytest
 
 
@@ -9,6 +11,8 @@ def go_to_tmpdir(request):
     tmpdir = request.getfixturevalue("tmpdir")
     # ensure local test created packages can be imported
     sys.path.insert(0, str(tmpdir))
-    # Chdir only for the duration of the test.
+    # copy test data to tmpdir
+    copy_tree("./data", str(tmpdir))
+    # chdir only for the duration of the test.
     with tmpdir.as_cwd():
         yield
