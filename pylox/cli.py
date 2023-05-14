@@ -1,5 +1,4 @@
 import sys
-import typing
 import typing as t
 from parser import Parser
 from pathlib import Path
@@ -49,8 +48,7 @@ class Lox:
         try:
             tokens = Scanner(src).scan_tokens()
             ast = Parser(tokens, self.report_error).parse()
-            if ast is not None:
-                print(self.interpreter.interpret(ast))
+            self.interpreter.interpret(ast)
         except LoxSyntaxError as e:
             self.report_error(e)
         except LoxRuntimeError as e:

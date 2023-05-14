@@ -77,8 +77,9 @@ def test_if_parser_parse_and_discard_right_hand_operand_in_case_of_empty_left_ha
 
     # WHEN
     tokens = Scanner(src).scan_tokens()
-    ast = Parser(tokens, handler).parse()
+    with pytest.raises(LoxParseError) as err:
+        Parser(tokens, handler).expression()
 
     # THEN
-    assert ast is None
+    assert "Expect ')' after expression." in err.value.message
     assert cnt == 2  # both errors have been handled

@@ -1,18 +1,34 @@
 import typing
 
-import pylox.expr as ast
+import pylox.expr as expr_ast
+import pylox.stmt as stmt_ast
 from pylox.error import LoxRuntimeError
+from pylox.expr import Expr, ExprVisitor
 from pylox.scanner import Token, TokenType
+from pylox.stmt import Stmt, StmtVisitor
 
 
-class Interpreter(ast.ExprVisitor):
-    def interpret(self, expr: ast.Expr):
-        return self.stringify(self.evaluate(expr))
+class Interpreter(ExprVisitor, StmtVisitor):
+    def interpret(self, statements: list[Stmt]):
+        for statement in statements:
+            self.execute(statement)
 
-    def evaluate(self, expr: ast.Expr) -> typing.Any:
+    def execute(self, stmt: Stmt):
+        stmt.accept(self)
+
+    def evaluate(self, expr: Expr) -> typing.Any:
         return expr.accept(self)
 
-    def visit_binary_expr(self, expr: ast.Binary):
+    def visit_expression_stmt(self, stmt: stmt_ast.Expression) -> typing.Any:
+        self.evaluate(stmt.expr)
+        return None
+
+    def visit_print_stmt(self, stmt: stmt_ast.Print) -> typing.Any:
+        value = self.evaluate(stmt.expr)
+        print(self.stringify(value))
+        return None
+
+    def visit_binary_expr(self, expr: expr_ast.Binary) -> typing.Any:
         left = self.evaluate(expr.left)
         right = self.evaluate(expr.right)
 
@@ -59,13 +75,13 @@ class Interpreter(ast.ExprVisitor):
                 self.check_number_operands(expr.operator, left, right)
                 return float(left) * float(right)
 
-    def visit_grouping_expr(self, expr: ast.Grouping):
+    def visit_grouping_expr(self, expr: expr_ast.Grouping) -> typing.Any:
         return expr.expr.accept(self)
 
-    def visit_literal_expr(self, expr: ast.Literal) -> typing.Any:
+    def visit_literal_expr(self, expr: expr_ast.Literal) -> typing.Any:
         return expr.value
 
-    def visit_unary_expr(self, expr: ast.Unary) -> typing.Any:
+    def visit_unary_expr(self, expr: expr_ast.Unary) -> typing.Any:
         right = self.evaluate(expr.right)
 
         if expr.operator.token_type is TokenType.MINUS:

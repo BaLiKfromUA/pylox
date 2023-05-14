@@ -10,7 +10,10 @@ def define_ast(base_name, types):
     # IMPORTS
     file.write('import typing\n')
     file.write('from abc import ABC, abstractmethod\n\n')
-    file.write('from pylox.tokens import Token\n')
+    if base_name == "Stmt":
+        file.write('from pylox.expr import Expr\n')
+    else:
+        file.write('from pylox.tokens import Token\n')
     # VISITOR
     define_visitor(file, base_name, types)
     # BASE CLASS
@@ -18,7 +21,7 @@ def define_ast(base_name, types):
     file.write(f'{TAB}def __init__(self):\n')
     file.write(f'{TAB * 2}pass\n')
     file.write(f'{TAB}@abstractmethod\n')
-    file.write(f'{TAB}def accept(self, visitor : {base_name}Visitor):\n')
+    file.write(f'{TAB}def accept(self, visitor : {base_name}Visitor) -> typing.Any:\n')
     file.write(f'{TAB * 2}pass')
     file.write('\n')
     # IMPLEMENTATIONS
@@ -53,7 +56,7 @@ def define_type(file, base_name, class_name, fields):
             file.write('\n')
 
     file.write('\n')
-    file.write(f'{TAB}def accept(self, visitor : {base_name}Visitor):\n')
+    file.write(f'{TAB}def accept(self, visitor : {base_name}Visitor) -> typing.Any:\n')
     file.write(f'{TAB * 2}return visitor.visit_{class_name.lower()}_{base_name.lower()}(self)')
     file.write('\n')
 
@@ -68,7 +71,7 @@ def define_visitor(file, base_name, types):
         file.write(f'{TAB}@abstractmethod')
         file.write('\n')
         file.write(f'{TAB}')
-        file.write(f"def visit_{t.lower()}_{base_name.lower()}(self, {base_name.lower()}):")
+        file.write(f"def visit_{t.lower()}_{base_name.lower()}(self, {base_name.lower()}) -> typing.Any:")
         file.write('\n')
         file.write(f'{TAB * 2}pass')
         file.write('\n')
@@ -83,7 +86,9 @@ if __name__ == "__main__":  # pragma: no cover
         "Unary": ('operator : Token', 'right : Expr'),
     }
     statements = {
+        "Expression": 'expr : Expr',
+        "Print": 'expr : Expr'
     }
 
     define_ast("Expr", expressions)
-    # define_ast("Stmt", statements)
+    define_ast("Stmt", statements)

@@ -1,9 +1,11 @@
 from typing import Callable, List, Optional
 
-import pylox.expr as ast
+import pylox.expr as expr_ast
+import pylox.stmt as stmt_ast
 from pylox.error import LoxParseError
 from pylox.expr import Expr
 from pylox.scanner import Token, TokenType
+from pylox.stmt import Stmt
 
 
 # recursive descent, top-down parser
@@ -15,11 +17,13 @@ class Parser:
         self.current = 0
         self.report_error = report_error
 
-    def parse(self) -> Optional[Expr]:
-        try:
-            return self.expression()
-        except LoxParseError:
-            return None
+    def parse(self) -> list[Stmt]:
+        # todo: error handling --> catch and process Parse Exception
+        statements: list[Stmt] = []
+        while not self.is_at_end():
+            statements.append(self.statement())
+
+        return statements
 
     # helpers
     def match(self, *token_types: TokenType) -> bool:
@@ -84,23 +88,40 @@ class Parser:
                 return
             self.advance()
 
+    # statements
+    def statement(self) -> Stmt:
+        if self.match(TokenType.PRINT):
+            return self.print_statement()
+
+        return self.expression_statement()
+
+    def print_statement(self) -> Stmt:
+        value = self.expression()
+        self.consume(TokenType.SEMICOLON, "Expect ';' after value.")
+        return stmt_ast.Print(value)
+
+    def expression_statement(self) -> Stmt:
+        value = self.expression()
+        self.consume(TokenType.SEMICOLON, "Expect ';' after value.")
+        return stmt_ast.Expression(value)
+
     # expressions
-    def expression(self) -> ast.Expr:
+    def expression(self) -> Expr:
         return self.equality()
 
     # equality       → comparison ( ( "!=" | "==" ) comparison )* ;
-    def equality(self) -> ast.Expr:
+    def equality(self) -> Expr:
         expr = self.comparison()
 
         while self.match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL):
             op = self.previous()
             right = self.comparison()
-            expr = ast.Binary(expr, op, right)
+            expr = expr_ast.Binary(expr, op, right)
 
         return expr
 
     # comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
-    def comparison(self) -> ast.Expr:
+    def comparison(self) -> Expr:
         expr = self.term()
 
         while self.match(
@@ -111,57 +132,57 @@ class Parser:
         ):
             op = self.previous()
             right = self.term()
-            expr = ast.Binary(expr, op, right)
+            expr = expr_ast.Binary(expr, op, right)
 
         return expr
 
     # term           → factor ( ( "-" | "+" ) factor )* ;
-    def term(self) -> ast.Expr:
+    def term(self) -> Expr:
         expr = self.factor()
 
         while self.match(TokenType.MINUS, TokenType.PLUS):
             op = self.previous()
             right = self.factor()
-            expr = ast.Binary(expr, op, right)
+            expr = expr_ast.Binary(expr, op, right)
 
         return expr
 
     # factor         → unary ( ( "/" | "*" ) unary )* ;
-    def factor(self) -> ast.Expr:
+    def factor(self) -> Expr:
         expr = self.unary()
 
         while self.match(TokenType.SLASH, TokenType.STAR):
             op = self.previous()
             right = self.unary()
-            expr = ast.Binary(expr, op, right)
+            expr = expr_ast.Binary(expr, op, right)
 
         return expr
 
     # unary          → ( "!" | "-" ) unary | primary ;
-    def unary(self) -> ast.Expr:
+    def unary(self) -> Expr:
         if self.match(TokenType.BANG, TokenType.MINUS):
             op = self.previous()
             right = self.unary()
-            return ast.Unary(op, right)
+            return expr_ast.Unary(op, right)
 
         return self.primary()
 
     # primary        → NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" ;
-    def primary(self) -> ast.Expr:
+    def primary(self) -> Expr:
         if self.match(TokenType.FALSE):
-            return ast.Literal(False)
+            return expr_ast.Literal(False)
         if self.match(TokenType.TRUE):
-            return ast.Literal(True)
+            return expr_ast.Literal(True)
         if self.match(TokenType.NIL):
-            return ast.Literal(None)
+            return expr_ast.Literal(None)
 
         if self.match(TokenType.NUMBER, TokenType.STRING):
-            return ast.Literal(self.previous().literal)
+            return expr_ast.Literal(self.previous().literal)
 
         if self.match(TokenType.LEFT_PAREN):
             expr = self.expression()
             self.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.")
-            return ast.Grouping(expr)
+            return expr_ast.Grouping(expr)
 
         # Error handling
         if self.match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL):
