@@ -33,6 +33,8 @@ I'm doing this because:
   other languages you know handle division by zero, and why do they make the choices they do?
   Change the implementation in `visitBinaryExpr()` to detect and report a runtime error for this
   case. [Solution](https://github.com/BaLiKfromUA/pylox/commit/bb5dc4117cb5b6a5947a6165aded331735a9bff4)
+- [ ] Add support to the REPL to let users type in both statements and expressions. If they enter a statement, execute
+  it. If they enter an expression, evaluate it and display the result value.
 
 ## My own design/implementation decisions
 
