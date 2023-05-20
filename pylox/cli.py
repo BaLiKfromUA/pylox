@@ -48,7 +48,8 @@ class Lox:
         try:
             tokens = Scanner(src).scan_tokens()
             ast = Parser(tokens, self.report_error).parse()
-            self.interpreter.interpret(ast)
+            if not self.had_error:
+                self.interpreter.interpret(ast)
         except LoxSyntaxError as e:
             self.report_error(e)
         except LoxRuntimeError as e:

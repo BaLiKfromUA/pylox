@@ -1,9 +1,17 @@
+import typing
+
 import pylox.expr as ast
 
 
 # Define a visitor class for our syntax tree classes that takes an expression,
 # converts it to RPN, and returns the resulting string.
 class RpnAstPrinter(ast.ExprVisitor):
+    def visit_assign_expr(self, expr) -> typing.Any:
+        pass
+
+    def visit_variable_expr(self, expr) -> typing.Any:
+        pass
+
     def print_expr(self, expr: ast.Expr):
         return expr.accept(self)
 

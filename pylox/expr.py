@@ -8,6 +8,10 @@ from pylox.tokens import Token
 
 class ExprVisitor(ABC):
     @abstractmethod
+    def visit_assign_expr(self, expr) -> typing.Any:
+        pass
+
+    @abstractmethod
     def visit_binary_expr(self, expr) -> typing.Any:
         pass
 
@@ -23,6 +27,10 @@ class ExprVisitor(ABC):
     def visit_unary_expr(self, expr) -> typing.Any:
         pass
 
+    @abstractmethod
+    def visit_variable_expr(self, expr) -> typing.Any:
+        pass
+
 
 class Expr:
     def __init__(self):
@@ -31,6 +39,16 @@ class Expr:
     @abstractmethod
     def accept(self, visitor: ExprVisitor) -> typing.Any:
         pass
+
+
+class Assign(Expr):
+    def __init__(self, name: Token, value: Expr):
+        super().__init__()
+        self.name = name
+        self.value = value
+
+    def accept(self, visitor: ExprVisitor) -> typing.Any:
+        return visitor.visit_assign_expr(self)
 
 
 class Binary(Expr):
@@ -70,3 +88,12 @@ class Unary(Expr):
 
     def accept(self, visitor: ExprVisitor) -> typing.Any:
         return visitor.visit_unary_expr(self)
+
+
+class Variable(Expr):
+    def __init__(self, name: Token):
+        super().__init__()
+        self.name = name
+
+    def accept(self, visitor: ExprVisitor) -> typing.Any:
+        return visitor.visit_variable_expr(self)

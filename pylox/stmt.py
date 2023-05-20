@@ -4,6 +4,7 @@ import typing
 from abc import ABC, abstractmethod
 
 from pylox.expr import Expr
+from pylox.tokens import Token
 
 
 class StmtVisitor(ABC):
@@ -13,6 +14,10 @@ class StmtVisitor(ABC):
 
     @abstractmethod
     def visit_print_stmt(self, stmt) -> typing.Any:
+        pass
+
+    @abstractmethod
+    def visit_var_stmt(self, stmt) -> typing.Any:
         pass
 
 
@@ -41,3 +46,13 @@ class Print(Stmt):
 
     def accept(self, visitor: StmtVisitor) -> typing.Any:
         return visitor.visit_print_stmt(self)
+
+
+class Var(Stmt):
+    def __init__(self, name: Token, initializer: typing.Optional[Expr]):
+        super().__init__()
+        self.name = name
+        self.initializer = initializer
+
+    def accept(self, visitor: StmtVisitor) -> typing.Any:
+        return visitor.visit_var_stmt(self)

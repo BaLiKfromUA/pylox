@@ -1,3 +1,5 @@
+import typing
+
 import pylox.expr as ast
 
 
@@ -5,6 +7,12 @@ import pylox.expr as ast
 class AstPrinter(ast.ExprVisitor):
     def print_expr(self, expr: ast.Expr):
         return expr.accept(self)
+
+    def visit_assign_expr(self, expr) -> typing.Any:
+        pass
+
+    def visit_variable_expr(self, expr) -> typing.Any:
+        pass
 
     def visit_binary_expr(self, expr: ast.Binary):
         return self.parenthesize(expr.operator.lexeme, expr.left, expr.right)

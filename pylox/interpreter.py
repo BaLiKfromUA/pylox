@@ -2,6 +2,7 @@ import typing
 
 import pylox.expr as expr_ast
 import pylox.stmt as stmt_ast
+from pylox.environment import Environment
 from pylox.error import LoxRuntimeError
 from pylox.expr import Expr, ExprVisitor
 from pylox.scanner import Token, TokenType
@@ -9,6 +10,9 @@ from pylox.stmt import Stmt, StmtVisitor
 
 
 class Interpreter(ExprVisitor, StmtVisitor):
+    def __init__(self):
+        self.environment = Environment()
+
     def interpret(self, statements: list[Stmt]):
         for statement in statements:
             self.execute(statement)
@@ -19,6 +23,15 @@ class Interpreter(ExprVisitor, StmtVisitor):
     def evaluate(self, expr: Expr) -> typing.Any:
         return expr.accept(self)
 
+    def visit_var_stmt(self, stmt: stmt_ast.Var) -> typing.Any:
+        value: typing.Any = None
+
+        if stmt.initializer is not None:
+            value = self.evaluate(stmt.initializer)
+
+        self.environment.define(stmt.name.lexeme, value)
+        return None
+
     def visit_expression_stmt(self, stmt: stmt_ast.Expression) -> typing.Any:
         self.evaluate(stmt.expr)
         return None
@@ -27,6 +40,14 @@ class Interpreter(ExprVisitor, StmtVisitor):
         value = self.evaluate(stmt.expr)
         print(self.stringify(value))
         return None
+
+    def visit_assign_expr(self, expr: expr_ast.Assign) -> typing.Any:
+        value = self.evaluate(expr.value)
+        self.environment.assign(expr.name, value)
+        return value
+
+    def visit_variable_expr(self, expr: expr_ast.Variable) -> typing.Any:
+        return self.environment.get(expr.name)
 
     def visit_binary_expr(self, expr: expr_ast.Binary) -> typing.Any:
         left = self.evaluate(expr.left)
@@ -128,5 +149,8 @@ class Interpreter(ExprVisitor, StmtVisitor):
 
         if type(value) is float and float(value).is_integer():
             return str(int(value))
+
+        if type(value) is bool:
+            return str(value).lower()
 
         return str(value)

@@ -12,8 +12,7 @@ def define_ast(base_name, types):
     file.write('from abc import ABC, abstractmethod\n\n')
     if base_name == "Stmt":
         file.write('from pylox.expr import Expr\n')
-    else:
-        file.write('from pylox.tokens import Token\n')
+    file.write('from pylox.tokens import Token\n')
     # VISITOR
     define_visitor(file, base_name, types)
     # BASE CLASS
@@ -80,14 +79,17 @@ def define_visitor(file, base_name, types):
 
 if __name__ == "__main__":  # pragma: no cover
     expressions = {
+        "Assign" : ('name : Token', 'value : Expr'),
         "Binary": ('left : Expr', 'operator : Token', 'right : Expr'),
         "Grouping": 'expr : Expr',
         "Literal": 'value : typing.Any',
         "Unary": ('operator : Token', 'right : Expr'),
+        "Variable": 'name : Token'
     }
     statements = {
         "Expression": 'expr : Expr',
-        "Print": 'expr : Expr'
+        "Print": 'expr : Expr',
+        "Var": ('name : Token', "initializer : typing.Optional[Expr]")
     }
 
     define_ast("Expr", expressions)

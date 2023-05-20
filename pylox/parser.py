@@ -17,11 +17,13 @@ class Parser:
         self.current = 0
         self.report_error = report_error
 
+    # program        → declaration * EOF;
     def parse(self) -> list[Stmt]:
-        # todo: error handling --> catch and process Parse Exception
         statements: list[Stmt] = []
         while not self.is_at_end():
-            statements.append(self.statement())
+            parsed = self.declaration()
+            if parsed is not None:
+                statements.append(parsed)
 
         return statements
 
@@ -89,12 +91,42 @@ class Parser:
             self.advance()
 
     # statements
+
+    # declaration    → varDecl
+    #                | statement ;
+    def declaration(self) -> Optional[Stmt]:
+        try:
+            if self.match(TokenType.VAR):
+                return self.var_declaration()
+
+            return self.statement()
+        except LoxParseError:
+            self.synchronize()
+            return None
+
+    # varDecl        → "var" IDENTIFIER ( "=" expression )? ";" ;
+    def var_declaration(self) -> Stmt:
+        name = self.consume(TokenType.IDENTIFIER, "Expect variable name.")
+        initializer: Optional[Expr] = None
+
+        if self.match(TokenType.EQUAL):
+            initializer = self.expression()
+
+        self.consume(
+            TokenType.SEMICOLON, "Expect ';' after variable declaration."
+        )
+
+        return stmt_ast.Var(name, initializer)
+
+    # statement      → exprStmt
+    #                | printStmt ;
     def statement(self) -> Stmt:
         if self.match(TokenType.PRINT):
             return self.print_statement()
 
         return self.expression_statement()
 
+    # printStmt -> PRINT expression ";"
     def print_statement(self) -> Stmt:
         value = self.expression()
         self.consume(TokenType.SEMICOLON, "Expect ';' after value.")
@@ -106,8 +138,25 @@ class Parser:
         return stmt_ast.Expression(value)
 
     # expressions
+    # expression     → assignment;
     def expression(self) -> Expr:
-        return self.equality()
+        return self.assignment()
+
+    # assignment     → IDENTIFIER "=" assignment
+    #                | equality ;
+    def assignment(self) -> Expr:
+        expr = self.equality()
+        if self.match(TokenType.EQUAL):
+            equals = self.previous()
+            value = self.assignment()
+
+            if isinstance(expr, expr_ast.Variable):
+                name = expr.name
+                return expr_ast.Assign(name, value)
+            else:
+                self.error(equals, "Invalid assignment target.")
+
+        return expr
 
     # equality       → comparison ( ( "!=" | "==" ) comparison )* ;
     def equality(self) -> Expr:
@@ -167,7 +216,7 @@ class Parser:
 
         return self.primary()
 
-    # primary        → NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" ;
+    # primary        → NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")"  | IDENTIFIER ;
     def primary(self) -> Expr:
         if self.match(TokenType.FALSE):
             return expr_ast.Literal(False)
@@ -178,6 +227,9 @@ class Parser:
 
         if self.match(TokenType.NUMBER, TokenType.STRING):
             return expr_ast.Literal(self.previous().literal)
+
+        if self.match(TokenType.IDENTIFIER):
+            return expr_ast.Variable(self.previous())
 
         if self.match(TokenType.LEFT_PAREN):
             expr = self.expression()

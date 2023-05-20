@@ -2,5 +2,5 @@ print "one";
 print true;
 print 2 + 1;
 // expect:one
-// expect:True
+// expect:true
 // expect:3
