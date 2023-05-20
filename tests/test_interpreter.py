@@ -7,8 +7,12 @@ import pytest
 
 from pylox.cli import Lox
 
-EXPECTED_TO_FAIL = ["block/empty.lox", "assignment/to_this.lox", "number/trailing_dot.lox",
-                    "number/decimal_point_at_eof.lox"]
+EXPECTED_TO_FAIL = [
+    "block/empty.lox",
+    "assignment/to_this.lox",
+    "number/trailing_dot.lox",
+    "number/decimal_point_at_eof.lox",
+]
 
 
 def prepare_list_of_test_files():
