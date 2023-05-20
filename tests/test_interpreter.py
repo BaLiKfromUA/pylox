@@ -8,10 +8,13 @@ import pytest
 from pylox.cli import Lox
 
 
-def prepare_list_of_test_files() -> list[str]:
+def prepare_list_of_test_files():
     start_path = f"{os.path.dirname(os.path.realpath(__file__))}/data/"
     return [
-        str(path).replace(start_path, "")
+        pytest.param(
+            str(path).replace(start_path, ""),
+            marks=getattr(pytest.mark, str(path).replace(start_path, "")),
+        )
         for path in Path(start_path).rglob("*.lox")
     ]
 
