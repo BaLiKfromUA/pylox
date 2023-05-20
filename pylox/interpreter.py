@@ -23,6 +23,21 @@ class Interpreter(ExprVisitor, StmtVisitor):
     def evaluate(self, expr: Expr) -> typing.Any:
         return expr.accept(self)
 
+    def visit_block_stmt(self, stmt: stmt_ast.Block) -> typing.Any:
+        self.execute_block(stmt.statements, Environment(self.environment))
+        return None
+
+    def execute_block(
+        self, statements: typing.List[Stmt], env: Environment
+    ) -> None:
+        previous = self.environment
+        try:
+            self.environment = env
+            for stmt in statements:
+                self.execute(stmt)
+        finally:
+            self.environment = previous
+
     def visit_var_stmt(self, stmt: stmt_ast.Var) -> typing.Any:
         value: typing.Any = None
 

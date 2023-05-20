@@ -1,3 +1,4 @@
+import typing
 from typing import Callable, List, Optional
 
 import pylox.expr as expr_ast
@@ -93,16 +94,33 @@ class Parser:
     # statements
 
     # declaration    → varDecl
-    #                | statement ;
+    #                | statement
+    #                | block ;
     def declaration(self) -> Optional[Stmt]:
         try:
             if self.match(TokenType.VAR):
                 return self.var_declaration()
 
+            if self.match(TokenType.LEFT_BRACE):
+                return stmt_ast.Block(self.block())
+
             return self.statement()
         except LoxParseError:
             self.synchronize()
             return None
+
+    # block          → "{" declaration* "}" ;
+    def block(self) -> typing.List[Stmt]:
+        stmts: typing.List[Stmt] = []
+
+        while not self.check(TokenType.RIGHT_BRACE) and not self.is_at_end():
+            result = self.declaration()
+            if result is not None:
+                stmts.append(result)
+
+        self.consume(TokenType.RIGHT_BRACE, "Expect '}' after block.")
+
+        return stmts
 
     # varDecl        → "var" IDENTIFIER ( "=" expression )? ";" ;
     def var_declaration(self) -> Stmt:

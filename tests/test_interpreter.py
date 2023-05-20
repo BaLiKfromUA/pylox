@@ -22,7 +22,7 @@ def parse_test_file(filename: Path) -> list[str]:
         return [
             line.split(":")[1]
             for line in lines
-            if line.startswith("// expect")
+            if line.strip().startswith("// expect")
         ]
 
 

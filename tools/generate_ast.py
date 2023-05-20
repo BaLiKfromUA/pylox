@@ -79,7 +79,7 @@ def define_visitor(file, base_name, types):
 
 if __name__ == "__main__":  # pragma: no cover
     expressions = {
-        "Assign" : ('name : Token', 'value : Expr'),
+        "Assign": ('name : Token', 'value : Expr'),
         "Binary": ('left : Expr', 'operator : Token', 'right : Expr'),
         "Grouping": 'expr : Expr',
         "Literal": 'value : typing.Any',
@@ -87,6 +87,7 @@ if __name__ == "__main__":  # pragma: no cover
         "Variable": 'name : Token'
     }
     statements = {
+        "Block": "statements : typing.List[Stmt]",
         "Expression": 'expr : Expr',
         "Print": 'expr : Expr',
         "Var": ('name : Token', "initializer : typing.Optional[Expr]")
