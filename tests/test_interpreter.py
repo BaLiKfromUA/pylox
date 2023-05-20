@@ -1,6 +1,6 @@
 import io
 import os
-from contextlib import redirect_stdout
+from contextlib import redirect_stdout, redirect_stderr
 from pathlib import Path
 
 import pytest
@@ -20,9 +20,9 @@ def parse_test_file(filename: Path) -> list[str]:
     with open(filename) as f:
         lines = [line.rstrip("\n") for line in f]
         return [
-            line.split(":")[1]
+            line.split("// expect:")[1].strip()
             for line in lines
-            if line.strip().startswith("// expect")
+            if "// expect" in line
         ]
 
 
@@ -31,10 +31,14 @@ def test_if_interpreter_works_as_expected(file: str) -> None:
     # GIVEN
     filename = Path(file).absolute()
     expected = parse_test_file(filename)
-    # WHEN
-    with io.StringIO() as buf, redirect_stdout(buf):
-        Lox().run_file(filename)
-        output = buf.getvalue()
-        actual = output.split("\n")[:-1]  # remove last '' element
+    with io.StringIO() as buf, redirect_stdout(buf), redirect_stderr(buf):
+        try:
+            # WHEN
+            Lox().run_file(filename)
+        except SystemExit:
+            pass
+        finally:
+            output = buf.getvalue()
+            actual = output.split("\n")[:-1]  # remove last '' element
     # THEN
     assert actual == expected

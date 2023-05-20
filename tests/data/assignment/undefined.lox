@@ -1,0 +1,1 @@
+unknown = "what"; // expect: line 2: Undefined variable unknown.

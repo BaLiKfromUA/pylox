@@ -85,9 +85,9 @@ class Interpreter(ExprVisitor, StmtVisitor):
                 self.check_number_operands(expr.operator, left, right)
                 return float(left) - float(right)
             case TokenType.BANG_EQUAL:
-                return left != right
+                return not self.equals(left, right)
             case TokenType.EQUAL_EQUAL:
-                return left == right
+                return self.equals(left, right)
             case TokenType.PLUS:
                 if self.is_number(left) and self.is_number(right):
                     return float(left) + float(right)
@@ -169,3 +169,7 @@ class Interpreter(ExprVisitor, StmtVisitor):
             return str(value).lower()
 
         return str(value)
+
+    @staticmethod
+    def equals(left: typing.Any, right: typing.Any) -> bool:
+        return type(left) == type(right) and left == right

@@ -1,0 +1,5 @@
+print "one";// expect: one
+print true;// expect: true
+print 2 + 1;// expect: 3
+
+
