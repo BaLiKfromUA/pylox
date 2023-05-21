@@ -17,6 +17,9 @@ class Interpreter(ExprVisitor, StmtVisitor):
         for statement in statements:
             self.execute(statement)
 
+    def interpret_expr(self, expr: Expr) -> str:
+        return self.stringify(self.evaluate(expr))
+
     def execute(self, stmt: Stmt):
         stmt.accept(self)
 

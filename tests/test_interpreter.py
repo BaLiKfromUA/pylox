@@ -2,6 +2,7 @@ import io
 import os
 from contextlib import redirect_stdout, redirect_stderr
 from pathlib import Path
+from unittest import mock
 
 import pytest
 
@@ -56,5 +57,30 @@ def test_if_interpreter_works_as_expected(file: str) -> None:
         finally:
             output = buf.getvalue()
             actual = output.split("\n")[:-1]  # remove last '' element
+    # THEN
+    assert actual == expected
+
+
+@mock.patch(
+    "builtins.input",
+    side_effect=[
+        'var s = "Hello, World!";',
+        "print s;",
+        "print no_var;",
+        "2 + 2 * 2",
+        "exit",
+    ],
+)
+def test_if_interpreter_works_as_expected_in_repl_mode(ignored) -> None:
+    expected = ["Hello, World!", "line 1: Undefined variable no_var.", "6"]
+
+    with io.StringIO() as buf, redirect_stdout(buf), redirect_stderr(buf):
+        # WHEN
+        Lox().run_prompt()
+        output = buf.getvalue()
+        actual = [
+            line.replace(">", "").strip() for line in output.split("\n")[:-1]
+        ]
+
     # THEN
     assert actual == expected

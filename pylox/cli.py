@@ -7,6 +7,7 @@ from rich import print
 from rich.prompt import Prompt
 
 from pylox.error import LoxException, LoxRuntimeError, LoxSyntaxError
+from pylox.expr import Expr
 from pylox.interpreter import Interpreter
 from pylox.parser import Parser
 from pylox.scanner import Scanner
@@ -34,11 +35,22 @@ class Lox:
     def run_prompt(self) -> None:
         while True:
             line = Prompt.ask("> ")
-
             if line == "exit":
                 break
+            try:
+                tokens = Scanner(line).scan_tokens()
+                ast = Parser(tokens, self.report_error).parse_repl()
+                if self.had_error:
+                    continue
 
-            self.run(line)
+                if isinstance(ast, Expr):
+                    print(self.interpreter.interpret_expr(ast))
+                elif isinstance(ast, list):
+                    self.interpreter.interpret(ast)
+            except LoxSyntaxError as e:
+                self.report_error(e)
+            except LoxRuntimeError as e:
+                self.report_runtime_error(e)
 
             # Reset these so we can stay in the REPL unhindered
             self.had_error = False

@@ -17,6 +17,8 @@ class Parser:
         self.tokens = tokens
         self.current = 0
         self.report_error = report_error
+        self.allow_expressions = False
+        self.found_expression = False
 
     # program        → declaration * EOF;
     def parse(self) -> list[Stmt]:
@@ -27,6 +29,28 @@ class Parser:
                 statements.append(parsed)
 
         return statements
+
+    def parse_repl(self) -> typing.Any:
+        try:
+            self.allow_expressions = True
+            statements: list[Stmt] = []
+            while not self.is_at_end():
+                parsed = self.declaration()
+                if parsed is not None:
+                    statements.append(parsed)
+
+                if self.found_expression and isinstance(
+                    statements[-1], stmt_ast.Expression
+                ):
+                    last: stmt_ast.Expression = statements[-1]
+                    return last.expr
+                elif self.found_expression:
+                    raise RuntimeError("Unexpected situation -- panic mode")
+
+            return statements
+        finally:
+            self.allow_expressions = False
+            self.found_expression = False
 
     # helpers
     def match(self, *token_types: TokenType) -> bool:
@@ -152,7 +176,10 @@ class Parser:
 
     def expression_statement(self) -> Stmt:
         value = self.expression()
-        self.consume(TokenType.SEMICOLON, "Expect ';' after value.")
+        if self.allow_expressions and self.is_at_end():
+            self.found_expression = True
+        else:
+            self.consume(TokenType.SEMICOLON, "Expect ';' after value.")
         return stmt_ast.Expression(value)
 
     # expressions
