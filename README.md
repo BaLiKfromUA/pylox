@@ -34,7 +34,7 @@ I'm doing this because:
   Change the implementation in `visitBinaryExpr()` to detect and report a runtime error for this
   case. [Solution](https://github.com/BaLiKfromUA/pylox/commit/bb5dc4117cb5b6a5947a6165aded331735a9bff4)
 - [X] Add support to the REPL to let users type in both statements and expressions. If they enter a statement, execute
-  it. If they enter an expression, evaluate it and display the result value.
+  it. If they enter an expression, evaluate it and display the result value. [Solution](https://github.com/BaLiKfromUA/pylox/commit/0a9d689365d0cd809bf496b4681d1066b7013c6a)
 
 ## My own design/implementation decisions
 
@@ -55,5 +55,6 @@ I'm doing this because:
   var list = [1, 2, 3, 4, 5];
   print map(lambda(num) { return num * num; }, list); // [1, 4, 9, 16, 25]
   ```
+- [ ] Support of user input
 
 

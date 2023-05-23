@@ -89,6 +89,7 @@ if __name__ == "__main__":  # pragma: no cover
     statements = {
         "Block": "statements : typing.List[Stmt]",
         "Expression": 'expr : Expr',
+        "If": ('condition : Expr', 'then_branch : Stmt', 'else_branch : typing.Optional[Stmt]'),
         "Print": 'expr : Expr',
         "Var": ('name : Token', "initializer : typing.Optional[Expr]")
     }

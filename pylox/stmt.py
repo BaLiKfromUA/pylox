@@ -17,6 +17,10 @@ class StmtVisitor(ABC):
         pass
 
     @abstractmethod
+    def visit_if_stmt(self, stmt) -> typing.Any:
+        pass
+
+    @abstractmethod
     def visit_print_stmt(self, stmt) -> typing.Any:
         pass
 
@@ -50,6 +54,22 @@ class Expression(Stmt):
 
     def accept(self, visitor: StmtVisitor) -> typing.Any:
         return visitor.visit_expression_stmt(self)
+
+
+class If(Stmt):
+    def __init__(
+        self,
+        condition: Expr,
+        then_branch: Stmt,
+        else_branch: typing.Optional[Stmt],
+    ):
+        super().__init__()
+        self.condition = condition
+        self.then_branch = then_branch
+        self.else_branch = else_branch
+
+    def accept(self, visitor: StmtVisitor) -> typing.Any:
+        return visitor.visit_if_stmt(self)
 
 
 class Print(Stmt):
