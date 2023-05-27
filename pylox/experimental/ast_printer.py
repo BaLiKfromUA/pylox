@@ -5,17 +5,17 @@ import pylox.expr as ast
 
 # utility class to test basics of AST
 class AstPrinter(ast.ExprVisitor):
-    def visit_logical_expr(self, expr) -> typing.Any:
-        pass
-
     def print_expr(self, expr: ast.Expr):
         return expr.accept(self)
 
+    def visit_logical_expr(self, expr) -> typing.Any:
+        raise NotImplementedError
+
     def visit_assign_expr(self, expr) -> typing.Any:
-        pass
+        raise NotImplementedError
 
     def visit_variable_expr(self, expr) -> typing.Any:
-        pass
+        raise NotImplementedError
 
     def visit_binary_expr(self, expr: ast.Binary):
         return self.parenthesize(expr.operator.lexeme, expr.left, expr.right)

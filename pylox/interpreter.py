@@ -87,6 +87,11 @@ class Interpreter(ExprVisitor, StmtVisitor):
         elif expr.operator.token_type == TokenType.AND:
             if not self.is_truthy(left):
                 return left
+        else:
+            raise LoxRuntimeError(
+                expr.operator,
+                f"Unknown logical operator {expr.operator.lexeme}",
+            )
 
         return self.evaluate(expr.right)
 
