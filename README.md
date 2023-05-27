@@ -10,6 +10,20 @@ I'm doing this because:
 3. I want to become more "fluent" with Python and its dev infrastructure.
 4. Fun.
 
+## Features
+
+- [x] Lexer
+- [x] Parser
+- [x] Basic types (`string`, `boolean`, `number`)
+- [x] Floating point arithmetic, string concatenation
+- [ ] Conditional expressions (ternary operator `?:`)
+- [x] Logical expressions (`and`, `or`)
+- [x] Control flow (for, while, if statements)
+    - [ ] Jumps: `break`/`continue`
+        - [ ] Semantic analysis: jumping out of loops
+- [ ] Functions
+- [ ] Classes
+
 ## Challenges
 
 - [X] Add support to Lox’s scanner for C-style /* ... */ block comments. Make sure to handle newlines in them. Consider
@@ -34,13 +48,14 @@ I'm doing this because:
   Change the implementation in `visitBinaryExpr()` to detect and report a runtime error for this
   case. [Solution](https://github.com/BaLiKfromUA/pylox/commit/bb5dc4117cb5b6a5947a6165aded331735a9bff4)
 - [X] Add support to the REPL to let users type in both statements and expressions. If they enter a statement, execute
-  it. If they enter an expression, evaluate it and display the result value. [Solution](https://github.com/BaLiKfromUA/pylox/commit/0a9d689365d0cd809bf496b4681d1066b7013c6a)
-- [ ] Unlike Lox, most other C-style languages also support `break` and `continue` statements inside loops. Add support for `break` statements.
+  it. If they enter an expression, evaluate it and display the result
+  value. [Solution](https://github.com/BaLiKfromUA/pylox/commit/0a9d689365d0cd809bf496b4681d1066b7013c6a)
+- [ ] Unlike Lox, most other C-style languages also support `break` and `continue` statements inside loops. Add support
+  for `break` statements. It should be a syntax error to have a break statement appear outside of any enclosing loop.
 
 ## My own design/implementation decisions
 
-- [ ] Compilation to WebAssembly according to [the specification](https://webassembly.github.io/spec/core/index.html).
-- [ ] Support of Lists. For example:
+- [ ] Support of lists. For example:
   ```javascript
   var list = [1, 2, 3, 4, 5];
   print list[0]; // 1
@@ -51,7 +66,7 @@ I'm doing this because:
   }
   print result; // [10, 20, 30, 40, 50]
   ```
-- [ ] Support of Anonymous Functions. For example:
+- [ ] Support of functional list processing. For example:
   ```javascript
   var list = [1, 2, 3, 4, 5];
   print map(lambda(num) { return num * num; }, list); // [1, 4, 9, 16, 25]
