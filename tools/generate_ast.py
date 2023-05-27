@@ -83,6 +83,7 @@ if __name__ == "__main__":  # pragma: no cover
         "Binary": ('left : Expr', 'operator : Token', 'right : Expr'),
         "Grouping": 'expr : Expr',
         "Literal": 'value : typing.Any',
+        "Logical": ('left : Expr', 'operator : Token', 'right : Expr'),
         "Unary": ('operator : Token', 'right : Expr'),
         "Variable": 'name : Token'
     }
@@ -91,7 +92,8 @@ if __name__ == "__main__":  # pragma: no cover
         "Expression": 'expr : Expr',
         "If": ('condition : Expr', 'then_branch : Stmt', 'else_branch : typing.Optional[Stmt]'),
         "Print": 'expr : Expr',
-        "Var": ('name : Token', "initializer : typing.Optional[Expr]")
+        "Var": ('name : Token', "initializer : typing.Optional[Expr]"),
+        "While": ('condition : Expr', 'body : Stmt')
     }
 
     define_ast("Expr", expressions)

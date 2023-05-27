@@ -34,6 +34,12 @@ class Interpreter(ExprVisitor, StmtVisitor):
 
         return None
 
+    def visit_while_stmt(self, stmt: stmt_ast.While) -> typing.Any:
+        while self.is_truthy(self.evaluate(stmt.condition)):
+            self.execute(stmt.body)
+
+        return None
+
     def visit_block_stmt(self, stmt: stmt_ast.Block) -> typing.Any:
         self.execute_block(stmt.statements, Environment(self.environment))
         return None
@@ -71,6 +77,18 @@ class Interpreter(ExprVisitor, StmtVisitor):
         value = self.evaluate(expr.value)
         self.environment.assign(expr.name, value)
         return value
+
+    def visit_logical_expr(self, expr: expr_ast.Logical) -> typing.Any:
+        left = self.evaluate(expr.left)
+
+        if expr.operator.token_type == TokenType.OR:
+            if self.is_truthy(left):
+                return left
+        elif expr.operator.token_type == TokenType.AND:
+            if not self.is_truthy(left):
+                return left
+
+        return self.evaluate(expr.right)
 
     def visit_variable_expr(self, expr: expr_ast.Variable) -> typing.Any:
         return self.environment.get(expr.name)
