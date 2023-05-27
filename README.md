@@ -35,6 +35,7 @@ I'm doing this because:
   case. [Solution](https://github.com/BaLiKfromUA/pylox/commit/bb5dc4117cb5b6a5947a6165aded331735a9bff4)
 - [X] Add support to the REPL to let users type in both statements and expressions. If they enter a statement, execute
   it. If they enter an expression, evaluate it and display the result value. [Solution](https://github.com/BaLiKfromUA/pylox/commit/0a9d689365d0cd809bf496b4681d1066b7013c6a)
+- [ ] Unlike Lox, most other C-style languages also support `break` and `continue` statements inside loops. Add support for `break` statements.
 
 ## My own design/implementation decisions
 

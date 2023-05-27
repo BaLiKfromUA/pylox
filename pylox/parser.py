@@ -145,6 +145,7 @@ class Parser:
 
     # statement      → exprStmt
     # | ifStmt
+    # | forStmt
     # | printStmt
     # | whileStmt
     # | block;
@@ -155,11 +156,14 @@ class Parser:
             return self.print_statement()
         if self.match(TokenType.WHILE):
             return self.while_statement()
+        if self.match(TokenType.FOR):
+            return self.for_statement()
         if self.match(TokenType.LEFT_BRACE):
             return stmt_ast.Block(self.block())
 
         return self.expression_statement()
 
+    # whileStmt      → "while" "(" expression ")" statement ;
     def while_statement(self) -> Stmt:
         self.consume(TokenType.LEFT_PAREN, "Expect '(' after 'while'.")
         condition = self.expression()
@@ -167,6 +171,46 @@ class Parser:
         body = self.statement()
 
         return stmt_ast.While(condition, body)
+
+    # forStmt        → "for" "(" ( varDecl | exprStmt | ";" )
+    #                  expression? ";"
+    #                  expression? ")" statement ;
+    def for_statement(self) -> Stmt:
+        self.consume(TokenType.LEFT_PAREN, "Expect '(' after 'for'.")
+
+        initializer = None
+        if self.match(TokenType.SEMICOLON):
+            pass
+        elif self.match(TokenType.VAR):
+            initializer = self.var_declaration()
+        else:
+            initializer = self.expression_statement()
+
+        condition = None
+        if not self.check(TokenType.SEMICOLON):
+            condition = self.expression()
+        self.consume(TokenType.SEMICOLON, "Expect ';' after loop condition.")
+
+        increment = None
+        if not self.check(TokenType.RIGHT_PAREN):
+            increment = self.expression()
+        self.consume(TokenType.RIGHT_PAREN, "Expect ')' after for clauses.")
+
+        body = self.statement()
+
+        if increment is not None:
+            body = stmt_ast.Block([body, stmt_ast.Expression(increment)])
+
+        if condition is None:
+            condition = expr_ast.Literal(True)
+
+        result: stmt_ast.While | stmt_ast.Block = stmt_ast.While(
+            condition, body
+        )
+        if initializer is not None:
+            result = stmt_ast.Block([initializer, result])
+
+        return result
 
     # ifStmt         → "if" "(" expression ")" statement
     #                ( "else" statement )? ;
