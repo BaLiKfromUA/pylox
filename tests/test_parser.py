@@ -88,11 +88,9 @@ def test_if_parser_parse_and_discard_right_hand_operand_in_case_of_empty_left_ha
 def test_if_parser_handles_break_outside_of_the_loop():
     # GIVEN
     src = "break;"
-
-    def handler(err: LoxParseError):
-        # THEN
-        assert "Must be inside a loop to use 'break'." in err.message
-
     # WHEN
-    tokens = Scanner(src).scan_tokens()
-    Parser(tokens, handler).parse()
+    with pytest.raises(LoxParseError) as err:
+        tokens = Scanner(src).scan_tokens()
+        Parser(tokens).statement()
+    # THEN
+    assert "Must be inside a loop to use 'break'." in err.value.message

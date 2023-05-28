@@ -172,7 +172,7 @@ class Parser:
     # break -> 'break' ;
     def break_statement(self) -> Stmt:
         if self.loop_depth == 0:
-            self.error(
+            raise self.error(
                 self.previous(), "Must be inside a loop to use 'break'."
             )
 
@@ -293,7 +293,7 @@ class Parser:
                 name = expr.name
                 return expr_ast.Assign(name, value)
             else:
-                self.error(equals, "Invalid assignment target.")
+                raise self.error(equals, "Invalid assignment target.")
 
         return expr
 
