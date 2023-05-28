@@ -1,5 +1,7 @@
 # pylox
 
+[![codecov](https://codecov.io/gh/BaLiKfromUA/pylox/branch/main/graph/badge.svg?token=Z3FSTHP2JF)](https://codecov.io/gh/BaLiKfromUA/pylox)
+
 **pylox** is Python implementation of Lox programming language which is a demo language
 from [Crafting Interpreters](http://www.craftinginterpreters.com/) book by [Bob Nystrom](https://github.com/munificent).
 
@@ -19,8 +21,8 @@ I'm doing this because:
 - [ ] Conditional expressions (ternary operator `?:`)
 - [x] Logical expressions (`and`, `or`)
 - [x] Control flow (for, while, if statements)
-    - [ ] Jumps: `break`/`continue`
-        - [ ] Semantic analysis: jumping out of loops
+    - [X] `break`
+        - [X] Semantic analysis: `break` out of loops
 - [ ] Functions
 - [ ] Classes
 
@@ -50,8 +52,8 @@ I'm doing this because:
 - [X] Add support to the REPL to let users type in both statements and expressions. If they enter a statement, execute
   it. If they enter an expression, evaluate it and display the result
   value. [Solution](https://github.com/BaLiKfromUA/pylox/commit/0a9d689365d0cd809bf496b4681d1066b7013c6a)
-- [ ] Unlike Lox, most other C-style languages also support `break` and `continue` statements inside loops. Add support
-  for `break` statements. It should be a syntax error to have a break statement appear outside of any enclosing loop.
+- [X] Unlike Lox, most other C-style languages also support `break` and `continue` statements inside loops. Add support
+  for `break` statements. It should be a syntax error to have a break statement appear outside of any enclosing loop. [Solution](https://github.com/BaLiKfromUA/pylox/commit/952af36c44b1d1d5beacd48c48a9671514059942)
 
 ## My own design/implementation decisions
 
