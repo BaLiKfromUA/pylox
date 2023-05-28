@@ -9,6 +9,10 @@ from pylox.scanner import Token, TokenType
 from pylox.stmt import Stmt, StmtVisitor
 
 
+class BreakException(RuntimeError):
+    pass
+
+
 class Interpreter(ExprVisitor, StmtVisitor):
     def __init__(self):
         self.environment = Environment()
@@ -35,10 +39,16 @@ class Interpreter(ExprVisitor, StmtVisitor):
         return None
 
     def visit_while_stmt(self, stmt: stmt_ast.While) -> typing.Any:
-        while self.is_truthy(self.evaluate(stmt.condition)):
-            self.execute(stmt.body)
+        try:
+            while self.is_truthy(self.evaluate(stmt.condition)):
+                self.execute(stmt.body)
+        except BreakException:
+            pass  # Do nothing.
 
         return None
+
+    def visit_break_stmt(self, stmt) -> typing.Any:
+        raise BreakException()
 
     def visit_block_stmt(self, stmt: stmt_ast.Block) -> typing.Any:
         self.execute_block(stmt.statements, Environment(self.environment))
@@ -206,4 +216,10 @@ class Interpreter(ExprVisitor, StmtVisitor):
 
     @staticmethod
     def equals(left: typing.Any, right: typing.Any) -> bool:
-        return type(left) == type(right) and left == right
+        try:
+            Interpreter.check_number_operands(
+                Token(TokenType.EQUAL_EQUAL, "", "", -1), left, right
+            )
+            return left == right
+        except LoxRuntimeError:
+            return type(left) == type(right) and left == right

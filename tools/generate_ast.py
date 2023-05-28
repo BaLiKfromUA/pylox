@@ -93,7 +93,8 @@ if __name__ == "__main__":  # pragma: no cover
         "If": ('condition : Expr', 'then_branch : Stmt', 'else_branch : typing.Optional[Stmt]'),
         "Print": 'expr : Expr',
         "Var": ('name : Token', "initializer : typing.Optional[Expr]"),
-        "While": ('condition : Expr', 'body : Stmt')
+        "While": ('condition : Expr', 'body : Stmt'),
+        "Break": ()
     }
 
     define_ast("Expr", expressions)
