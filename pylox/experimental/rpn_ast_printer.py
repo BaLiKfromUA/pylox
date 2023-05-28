@@ -5,7 +5,7 @@ import pylox.expr as ast
 
 # Define a visitor class for our syntax tree classes that takes an expression,
 # converts it to RPN, and returns the resulting string.
-class RpnAstPrinter(ast.ExprVisitor):
+class RpnAstPrinter(ast.ExprVisitor):  # pragma: no cover
     def print_expr(self, expr: ast.Expr):
         return expr.accept(self)
 

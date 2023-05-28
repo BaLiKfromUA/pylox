@@ -20,8 +20,8 @@ I'm doing this because:
 - [x] Floating point arithmetic, string concatenation
 - [ ] Conditional expressions (ternary operator `?:`)
 - [x] Logical expressions (`and`, `or`)
-- [x] Control flow (for, while, if statements)
-    - [X] `break`
+- [x] Control flow (`for`, `while`, `if` statements)
+    - [X] `break` statement
         - [X] Semantic analysis: `break` out of loops
 - [ ] Functions
 - [ ] Classes
