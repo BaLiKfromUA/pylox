@@ -83,3 +83,16 @@ def test_if_interpreter_works_as_expected_in_repl_mode(ignored) -> None:
 
     # THEN
     assert actual == expected
+
+
+@mock.patch("time.time", return_value=42)
+def test_if_builtin_functions_work_as_expected(mock_time) -> None:
+    # GIVEN
+    src = "print clock();"
+    # WHEN
+    with io.StringIO() as buf, redirect_stdout(buf), redirect_stderr(buf):
+        Lox().run(src)
+        output = buf.getvalue()
+    # THEN
+    mock_time.assert_called_once()
+    assert output == "42\n"
