@@ -53,7 +53,8 @@ I'm doing this because:
   it. If they enter an expression, evaluate it and display the result
   value. [Solution](https://github.com/BaLiKfromUA/pylox/commit/0a9d689365d0cd809bf496b4681d1066b7013c6a)
 - [X] Unlike Lox, most other C-style languages also support `break` and `continue` statements inside loops. Add support
-  for `break` statements. It should be a syntax error to have a break statement appear outside of any enclosing loop. [Solution](https://github.com/BaLiKfromUA/pylox/commit/952af36c44b1d1d5beacd48c48a9671514059942)
+  for `break` statements. It should be a syntax error to have a break statement appear outside of any enclosing
+  loop. [Solution](https://github.com/BaLiKfromUA/pylox/commit/952af36c44b1d1d5beacd48c48a9671514059942)
 
 ## My own design/implementation decisions
 
@@ -73,6 +74,8 @@ I'm doing this because:
   var list = [1, 2, 3, 4, 5];
   print map(lambda(num) { return num * num; }, list); // [1, 4, 9, 16, 25]
   ```
-- [ ] Support of user input
+- [X] Support of additional built-in functions:
+    - [X] `input`
+    - [X] `len`
 
 

@@ -14,6 +14,8 @@ EXPECTED_TO_FAIL = [
     "number/decimal_point_at_eof.lox",
 ]
 
+IGNORE = ["custom/input.lox"]
+
 
 def prepare_list_of_test_files():
     start_path = f"{os.path.dirname(os.path.realpath(__file__))}/data/"
@@ -21,15 +23,16 @@ def prepare_list_of_test_files():
         str(path).replace(start_path, "")
         for path in Path(start_path).rglob("*.lox")
     ]
-    tests_with_marks = [
+    tests_with_marks_and_filtered = [
         pytest.param(test, marks=[getattr(pytest.mark, test)])
         for test in tests
+        if not (test in IGNORE)
     ]
-    for test in tests_with_marks:
+    for test in tests_with_marks_and_filtered:
         if test.values[0] in EXPECTED_TO_FAIL:
             test.marks.append(pytest.mark.xfail)
 
-    return tests_with_marks
+    return tests_with_marks_and_filtered
 
 
 def parse_test_file(filename: Path) -> list[str]:
@@ -86,7 +89,7 @@ def test_if_interpreter_works_as_expected_in_repl_mode(ignored) -> None:
 
 
 @mock.patch("time.time", return_value=42)
-def test_if_builtin_functions_work_as_expected(mock_time) -> None:
+def test_if_builtin_functions_work_as_expected_without_args(mock_time) -> None:
     # GIVEN
     src = "print clock();"
     # WHEN
@@ -96,3 +99,23 @@ def test_if_builtin_functions_work_as_expected(mock_time) -> None:
     # THEN
     mock_time.assert_called_once()
     assert output == "42\n"
+
+
+@mock.patch("builtins.input", return_value="test")
+def test_if_builtin_functions_work_as_expected_with_args(mock_input) -> None:
+    # GIVEN
+    file = "custom/input.lox"
+    filename = Path(file).absolute()
+    # WHEN
+    with io.StringIO() as buf, redirect_stdout(buf), redirect_stderr(buf):
+        try:
+            Lox().run_file(filename)
+        except SystemExit:
+            pass
+        finally:
+            output = buf.getvalue()
+            actual = output.split("\n")[:-1]  # remove last '' element
+    # THEN
+    mock_input.assert_called_once()
+    assert len(actual) == 1
+    assert actual[0] == "4"

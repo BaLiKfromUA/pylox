@@ -1,0 +1,2 @@
+var x = input();
+print len(x); // error is expected if x is not string or array

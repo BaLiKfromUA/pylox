@@ -12,6 +12,20 @@ class Clock(LoxCallable):
         return 0
 
 
-FUNCTIONS_MAPPING = {
-    "clock": Clock(),
-}
+class Input(LoxCallable):
+    def call(self, interpreter, args) -> typing.Any:
+        return input()
+
+    def arity(self) -> int:
+        return 0
+
+
+class Len(LoxCallable):
+    def call(self, interpreter, args) -> typing.Any:
+        return len(args[0])
+
+    def arity(self) -> int:
+        return 1
+
+
+FUNCTIONS_MAPPING = {"clock": Clock(), "input": Input(), "len": Len()}
