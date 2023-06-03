@@ -45,20 +45,24 @@ def parse_test_file(filename: Path) -> list[str]:
         ]
 
 
-@pytest.mark.parametrize("file", prepare_list_of_test_files())
-def test_if_interpreter_works_as_expected(file: str) -> None:
-    # GIVEN
-    filename = Path(file).absolute()
-    expected = parse_test_file(filename)
+def run_file(filename: Path) -> list[str]:
     with io.StringIO() as buf, redirect_stdout(buf), redirect_stderr(buf):
         try:
-            # WHEN
             Lox().run_file(filename)
         except SystemExit:
             pass
         finally:
             output = buf.getvalue()
-            actual = output.split("\n")[:-1]  # remove last '' element
+            return output.split("\n")[:-1]  # remove last '' element
+
+
+@pytest.mark.parametrize("file", prepare_list_of_test_files())
+def test_if_interpreter_works_as_expected(file: str) -> None:
+    # GIVEN
+    filename = Path(file).absolute()
+    expected = parse_test_file(filename)
+    # WHEN
+    actual = run_file(filename)
     # THEN
     assert actual == expected
 
@@ -107,14 +111,7 @@ def test_if_builtin_functions_work_as_expected_with_args(mock_input) -> None:
     file = "custom/input.lox"
     filename = Path(file).absolute()
     # WHEN
-    with io.StringIO() as buf, redirect_stdout(buf), redirect_stderr(buf):
-        try:
-            Lox().run_file(filename)
-        except SystemExit:
-            pass
-        finally:
-            output = buf.getvalue()
-            actual = output.split("\n")[:-1]  # remove last '' element
+    actual = run_file(filename)
     # THEN
     mock_input.assert_called_once()
     assert len(actual) == 1
