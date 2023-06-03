@@ -16,6 +16,10 @@ class ExprVisitor(ABC):
         pass
 
     @abstractmethod
+    def visit_call_expr(self, expr) -> typing.Any:
+        pass
+
+    @abstractmethod
     def visit_grouping_expr(self, expr) -> typing.Any:
         pass
 
@@ -64,6 +68,19 @@ class Binary(Expr):
 
     def accept(self, visitor: ExprVisitor) -> typing.Any:
         return visitor.visit_binary_expr(self)
+
+
+class Call(Expr):
+    def __init__(
+        self, callee: Expr, paren: Token, arguments: typing.List[Expr]
+    ):
+        super().__init__()
+        self.callee = callee
+        self.paren = paren
+        self.arguments = arguments
+
+    def accept(self, visitor: ExprVisitor) -> typing.Any:
+        return visitor.visit_call_expr(self)
 
 
 class Grouping(Expr):

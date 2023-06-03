@@ -2,7 +2,6 @@ TAB = '    '
 
 
 def define_ast(base_name, types):
-    # TODO: Add output directory handling
     path = "../pylox/" + base_name.lower() + ".py"
     file = open(path, "w")
     # HEADER
@@ -77,10 +76,11 @@ def define_visitor(file, base_name, types):
     file.write(f'\n')
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     expressions = {
         "Assign": ('name : Token', 'value : Expr'),
         "Binary": ('left : Expr', 'operator : Token', 'right : Expr'),
+        "Call": ('callee : Expr', 'paren : Token', "arguments : typing.List[Expr]"),
         "Grouping": 'expr : Expr',
         "Literal": 'value : typing.Any',
         "Logical": ('left : Expr', 'operator : Token', 'right : Expr'),

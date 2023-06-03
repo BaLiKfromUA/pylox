@@ -1,7 +1,9 @@
 import typing
 
 import pylox.expr as expr_ast
+import pylox.runtime_entity as runtime
 import pylox.stmt as stmt_ast
+from pylox.builtin_function import FUNCTIONS_MAPPING
 from pylox.environment import Environment
 from pylox.error import LoxRuntimeError
 from pylox.expr import Expr, ExprVisitor
@@ -9,13 +11,15 @@ from pylox.scanner import Token, TokenType
 from pylox.stmt import Stmt, StmtVisitor
 
 
-class BreakException(RuntimeError):
-    pass
-
-
 class Interpreter(ExprVisitor, StmtVisitor):
     def __init__(self):
-        self.environment = Environment()
+        self.globals = Environment()
+        self.environment = self.globals
+        self.init_standard_library()
+
+    def init_standard_library(self):
+        for name, func in FUNCTIONS_MAPPING.items():
+            self.globals.define(name, func)
 
     def interpret(self, statements: list[Stmt]):
         for statement in statements:
@@ -30,6 +34,25 @@ class Interpreter(ExprVisitor, StmtVisitor):
     def evaluate(self, expr: Expr) -> typing.Any:
         return expr.accept(self)
 
+    def visit_call_expr(self, expr: expr_ast.Call) -> typing.Any:
+        callee = self.evaluate(expr.callee)
+        arguments: list = []
+        for arg in expr.arguments:
+            arguments.append(self.evaluate(arg))
+
+        if not isinstance(callee, runtime.LoxCallable):
+            raise LoxRuntimeError(
+                expr.paren, "Can only call functions and classes."
+            )
+
+        if len(arguments) != callee.arity():
+            raise LoxRuntimeError(
+                expr.paren,
+                f"Expected {callee.arity()} arguments but got {len(arguments)}.",
+            )
+
+        return callee.call(self, arguments)
+
     def visit_if_stmt(self, stmt: stmt_ast.If) -> typing.Any:
         if self.is_truthy(self.evaluate(stmt.condition)):
             self.execute(stmt.then_branch)
@@ -42,13 +65,13 @@ class Interpreter(ExprVisitor, StmtVisitor):
         try:
             while self.is_truthy(self.evaluate(stmt.condition)):
                 self.execute(stmt.body)
-        except BreakException:
+        except runtime.BreakException:
             pass  # Do nothing.
 
         return None
 
     def visit_break_stmt(self, stmt) -> typing.Any:
-        raise BreakException()
+        raise runtime.BreakException()
 
     def visit_block_stmt(self, stmt: stmt_ast.Block) -> typing.Any:
         self.execute_block(stmt.statements, Environment(self.environment))

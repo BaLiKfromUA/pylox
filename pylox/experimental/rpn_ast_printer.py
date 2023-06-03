@@ -9,6 +9,9 @@ class RpnAstPrinter(ast.ExprVisitor):  # pragma: no cover
     def print_expr(self, expr: ast.Expr):
         return expr.accept(self)
 
+    def visit_call_expr(self, expr) -> typing.Any:
+        raise NotImplementedError
+
     def visit_logical_expr(self, expr) -> typing.Any:
         raise NotImplementedError
 
