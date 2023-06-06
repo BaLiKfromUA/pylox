@@ -7,6 +7,7 @@ from pylox.builtin_function import FUNCTIONS_MAPPING
 from pylox.environment import Environment
 from pylox.error import LoxRuntimeError
 from pylox.expr import Expr, ExprVisitor
+from pylox.runtime_entity import LoxFunction
 from pylox.scanner import Token, TokenType
 from pylox.stmt import Stmt, StmtVisitor
 
@@ -33,6 +34,11 @@ class Interpreter(ExprVisitor, StmtVisitor):
 
     def evaluate(self, expr: Expr) -> typing.Any:
         return expr.accept(self)
+
+    def visit_function_stmt(self, stmt: stmt_ast.Function) -> typing.Any:
+        function = LoxFunction(stmt)
+        self.environment.define(stmt.name.lexeme, function)
+        return None
 
     def visit_call_expr(self, expr: expr_ast.Call) -> typing.Any:
         callee = self.evaluate(expr.callee)

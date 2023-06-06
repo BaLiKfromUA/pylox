@@ -90,6 +90,7 @@ if __name__ == "__main__":
     statements = {
         "Block": "statements : typing.List[Stmt]",
         "Expression": 'expr : Expr',
+        "Function": ('name: Token', 'params: typing.List[Token]', 'body: typing.List[Stmt]'),
         "If": ('condition : Expr', 'then_branch : Stmt', 'else_branch : typing.Optional[Stmt]'),
         "Print": 'expr : Expr',
         "Var": ('name : Token', "initializer : typing.Optional[Expr]"),
