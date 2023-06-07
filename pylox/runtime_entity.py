@@ -9,6 +9,11 @@ class BreakException(RuntimeError):
     pass
 
 
+class Return(RuntimeError):
+    def __init__(self, value: typing.Any) -> None:
+        self.value = value
+
+
 class LoxCallable(ABC):
     @abstractmethod
     def call(self, interpreter, args) -> typing.Any:
@@ -27,7 +32,10 @@ class LoxFunction(LoxCallable):
         env = Environment(interpreter.globals)
         for i in range(len(self._declaration.params)):
             env.define(self._declaration.params[i].lexeme, args[i])
-        interpreter.execute_block(self._declaration.body, env)
+        try:
+            interpreter.execute_block(self._declaration.body, env)
+        except Return as return_value:
+            return return_value.value
         return None
 
     def arity(self) -> int:

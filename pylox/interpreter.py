@@ -35,6 +35,12 @@ class Interpreter(ExprVisitor, StmtVisitor):
     def evaluate(self, expr: Expr) -> typing.Any:
         return expr.accept(self)
 
+    def visit_return_stmt(self, stmt: stmt_ast.Return) -> typing.Any:
+        value = None
+        if stmt.value is not None:
+            value = self.evaluate(stmt.value)
+        raise runtime.Return(value)
+
     def visit_function_stmt(self, stmt: stmt_ast.Function) -> typing.Any:
         function = LoxFunction(stmt)
         self.environment.define(stmt.name.lexeme, function)

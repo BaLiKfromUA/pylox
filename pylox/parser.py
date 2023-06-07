@@ -177,13 +177,16 @@ class Parser:
     # | forStmt
     # | printStmt
     # | whileStmt
-    # | block;
+    # | returnStmt
+    # | block
     # | break;
     def statement(self) -> Stmt:
         if self.match(TokenType.IF):
             return self.if_statement()
         if self.match(TokenType.PRINT):
             return self.print_statement()
+        if self.match(TokenType.RETURN):
+            return self.return_statement()
         if self.match(TokenType.WHILE):
             return self.while_statement()
         if self.match(TokenType.FOR):
@@ -194,6 +197,14 @@ class Parser:
             return self.break_statement()
 
         return self.expression_statement()
+
+    def return_statement(self) -> Stmt:
+        keyword = self.previous()
+        value = None
+        if not self.check(TokenType.SEMICOLON):
+            value = self.expression()
+        self.consume(TokenType.SEMICOLON, "Expect ';' after return value.")
+        return stmt_ast.Return(keyword, value)
 
     # break -> 'break' ;
     def break_statement(self) -> Stmt:
