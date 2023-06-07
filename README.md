@@ -23,7 +23,7 @@ I'm doing this because:
 - [x] Control flow (`for`, `while`, `if` statements)
     - [X] `break` statement
         - [X] Semantic analysis: `break` out of loops
-- [ ] Functions
+- [X] Functions
 - [ ] Classes
 
 ## Challenges

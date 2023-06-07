@@ -12,3 +12,17 @@ fun fib(n) {
 }
 
 print fib(10); // expect: 55
+
+fun makeCounter() {
+  var i = 0;
+  fun count() {
+    i = i + 1;
+    print i;
+  }
+
+  return count;
+}
+
+var counter = makeCounter();
+counter(); // expect: 1
+counter(); // expect: 2
