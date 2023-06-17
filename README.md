@@ -24,6 +24,7 @@ I'm doing this because:
     - [X] `break` statement
         - [X] Check `break` out of loops
 - [X] Functions
+    - [X] Check `return` out of function
 - [ ] Classes
 
 ## Challenges

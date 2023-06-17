@@ -1,4 +1,5 @@
 import typing
+from enum import Enum, auto
 
 import pylox.expr as expr_ast
 import pylox.stmt as stmt_ast
@@ -9,10 +10,16 @@ from pylox.scanner import Token
 from pylox.stmt import Stmt, StmtVisitor
 
 
+class FunctionType(Enum):
+    NONE = (auto(),)
+    FUNCTION = auto()
+
+
 class Resolver(ExprVisitor, StmtVisitor):
     def __init__(self, interpreter: Interpreter):
         self.interpreter = interpreter
         self.scopes: typing.List[typing.Dict[str, bool]] = []
+        self.current_function = FunctionType.NONE
 
     def begin_scope(self) -> None:
         self.scopes.append({})
@@ -45,13 +52,18 @@ class Resolver(ExprVisitor, StmtVisitor):
                 self.interpreter.resolve(expr, len(self.scopes) - 1 - i)
                 return
 
-    def resolve_function(self, function: stmt_ast.Function) -> None:
+    def resolve_function(
+        self, function: stmt_ast.Function, fun_type: FunctionType
+    ) -> None:
+        parent_fun = self.current_function
+        self.current_function = fun_type
         self.begin_scope()
         for param in function.params:
             self.declare(param)
             self.define(param)
         self.resolve(function.body)
         self.end_scope()
+        self.current_function = parent_fun
 
     def visit_assign_expr(self, expr: expr_ast.Assign) -> typing.Any:
         self.resolve_ast_node(expr.value)
@@ -113,7 +125,7 @@ class Resolver(ExprVisitor, StmtVisitor):
         # before resolving the function’s body.
         # This lets a function recursively refer to itself inside its own body.
         self.define(stmt.name)
-        self.resolve_function(stmt)
+        self.resolve_function(stmt, FunctionType.FUNCTION)
         return None
 
     def visit_if_stmt(self, stmt: stmt_ast.If) -> typing.Any:
@@ -128,6 +140,11 @@ class Resolver(ExprVisitor, StmtVisitor):
         return None
 
     def visit_return_stmt(self, stmt: stmt_ast.Return) -> typing.Any:
+        if self.current_function is FunctionType.NONE:
+            raise LoxParseError(
+                stmt.keyword, "Can't return from top-level code."
+            )
+
         if stmt.value is not None:
             self.resolve_ast_node(stmt.value)
         return None
