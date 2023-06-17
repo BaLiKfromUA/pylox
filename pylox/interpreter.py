@@ -15,12 +15,16 @@ from pylox.stmt import Stmt, StmtVisitor
 class Interpreter(ExprVisitor, StmtVisitor):
     def __init__(self):
         self.globals = Environment()
+        self.locals: typing.Dict[Expr, int] = {}
         self.environment = self.globals
         self.init_standard_library()
 
-    def init_standard_library(self):
+    def init_standard_library(self) -> None:
         for name, func in FUNCTIONS_MAPPING.items():
             self.globals.define(name, func)
+
+    def resolve(self, expr: Expr, depth: int) -> None:
+        self.locals[expr] = depth
 
     def interpret(self, statements: list[Stmt]):
         for statement in statements:
@@ -120,7 +124,11 @@ class Interpreter(ExprVisitor, StmtVisitor):
 
     def visit_assign_expr(self, expr: expr_ast.Assign) -> typing.Any:
         value = self.evaluate(expr.value)
-        self.environment.assign(expr.name, value)
+        distance = self.locals.get(expr)
+        if distance is not None:
+            self.environment.assign_at(distance, expr.name, value)
+        else:
+            self.globals.assign(expr.name, value)
         return value
 
     def visit_logical_expr(self, expr: expr_ast.Logical) -> typing.Any:
@@ -141,7 +149,14 @@ class Interpreter(ExprVisitor, StmtVisitor):
         return self.evaluate(expr.right)
 
     def visit_variable_expr(self, expr: expr_ast.Variable) -> typing.Any:
-        return self.environment.get(expr.name)
+        return self.lookup_variable(expr.name, expr)
+
+    def lookup_variable(self, name: Token, expr: Expr) -> typing.Any:
+        distance = self.locals.get(expr)
+        if distance is not None:
+            return self.environment.get_at(distance, name.lexeme)
+        else:
+            return self.globals.get(name)
 
     def visit_binary_expr(self, expr: expr_ast.Binary) -> typing.Any:
         left = self.evaluate(expr.left)

@@ -22,7 +22,7 @@ I'm doing this because:
 - [x] Logical expressions (`and`, `or`)
 - [x] Control flow (`for`, `while`, `if` statements)
     - [X] `break` statement
-        - [X] Semantic analysis: `break` out of loops
+        - [X] Check `break` out of loops
 - [X] Functions
 - [ ] Classes
 
@@ -55,6 +55,8 @@ I'm doing this because:
 - [X] Unlike Lox, most other C-style languages also support `break` and `continue` statements inside loops. Add support
   for `break` statements. It should be a syntax error to have a break statement appear outside of any enclosing
   loop. [Solution](https://github.com/BaLiKfromUA/pylox/commit/952af36c44b1d1d5beacd48c48a9671514059942)
+- [ ] Languages that encourage a functional style usually support **anonymous functions or lambdas**—an expression
+  syntax that creates a function without binding it to a name. Add anonymous function syntax to Lox.
 
 ## My own design/implementation decisions
 
