@@ -141,10 +141,9 @@ class While(Stmt):
 
 
 class Break(Stmt):
-    def __init__(
-        self,
-    ):
+    def __init__(self, keyword: Token):
         super().__init__()
+        self.keyword = keyword
 
     def accept(self, visitor: StmtVisitor) -> typing.Any:
         return visitor.visit_break_stmt(self)

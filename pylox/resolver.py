@@ -20,6 +20,7 @@ class Resolver(ExprVisitor, StmtVisitor):
         self.interpreter = interpreter
         self.scopes: typing.List[typing.Dict[str, bool]] = []
         self.current_function = FunctionType.NONE
+        self.loop_depth = 0
 
     def begin_scope(self) -> None:
         self.scopes.append({})
@@ -158,9 +159,14 @@ class Resolver(ExprVisitor, StmtVisitor):
 
     def visit_while_stmt(self, stmt: stmt_ast.While) -> typing.Any:
         self.resolve_ast_node(stmt.condition)
+        self.loop_depth += 1
         self.resolve_ast_node(stmt.body)
+        self.loop_depth -= 1
         return None
 
     def visit_break_stmt(self, stmt: stmt_ast.Break) -> typing.Any:
-        # do nothing
+        if self.loop_depth == 0:
+            raise LoxParseError(
+                stmt.keyword, "Must be inside a loop to use 'break'."
+            )
         return None

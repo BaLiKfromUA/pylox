@@ -43,3 +43,15 @@ def test_if_resolver_finds_return_out_of_the_function(interpreter):
     # THEN
     assert not interpreter.called
     assert "Can't return from top-level code." in err.value.message
+
+
+@patch("pylox.interpreter")
+def test_if_resolver_handles_break_outside_of_the_loop(interpreter):
+    # GIVEN
+    src = "break;"
+    # WHEN
+    with pytest.raises(LoxParseError) as err:
+        run_resolver(src, interpreter)
+    # THEN
+    assert not interpreter.called
+    assert "Must be inside a loop to use 'break'." in err.value.message

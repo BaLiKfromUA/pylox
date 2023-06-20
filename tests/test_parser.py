@@ -83,14 +83,3 @@ def test_if_parser_parse_and_discard_right_hand_operand_in_case_of_empty_left_ha
     # THEN
     assert "Expect ')' after expression." in err.value.message
     assert cnt == 2  # both errors have been handled
-
-
-def test_if_parser_handles_break_outside_of_the_loop():
-    # GIVEN
-    src = "break;"
-    # WHEN
-    with pytest.raises(LoxParseError) as err:
-        tokens = Scanner(src).scan_tokens()
-        Parser(tokens).statement()
-    # THEN
-    assert "Must be inside a loop to use 'break'." in err.value.message

@@ -58,6 +58,8 @@ I'm doing this because:
   loop. [Solution](https://github.com/BaLiKfromUA/pylox/commit/952af36c44b1d1d5beacd48c48a9671514059942)
 - [ ] Languages that encourage a functional style usually support **anonymous functions or lambdas**—an expression
   syntax that creates a function without binding it to a name. Add anonymous function syntax to Lox.
+- [ ] Extend the resolver to report an error if a local variable is never used.
+- [ ] Extend the resolver to associate a unique index for each local variable declared in a scope.
 
 ## My own design/implementation decisions
 

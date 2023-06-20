@@ -19,7 +19,6 @@ class Parser:
         self.report_error = report_error
         self.allow_expressions = False
         self.found_expression = False
-        self.loop_depth = 0
 
     # program        → declaration * EOF;
     def parse(self) -> list[Stmt]:
@@ -208,25 +207,17 @@ class Parser:
 
     # break -> 'break' ;
     def break_statement(self) -> Stmt:
-        if self.loop_depth == 0:
-            raise self.error(
-                self.previous(), "Must be inside a loop to use 'break'."
-            )
-
+        keyword = self.previous()
         self.consume(TokenType.SEMICOLON, "Expect ';' after 'break'.")
-        return stmt_ast.Break()
+        return stmt_ast.Break(keyword)
 
     # whileStmt      → "while" "(" expression ")" statement ;
     def while_statement(self) -> Stmt:
         self.consume(TokenType.LEFT_PAREN, "Expect '(' after 'while'.")
         condition = self.expression()
         self.consume(TokenType.RIGHT_PAREN, "Expect ')' after condition.")
-        try:
-            self.loop_depth += 1
-            body = self.statement()
-            return stmt_ast.While(condition, body)
-        finally:
-            self.loop_depth -= 1
+        body = self.statement()
+        return stmt_ast.While(condition, body)
 
     # forStmt        → "for" "(" ( varDecl | exprStmt | ";" )
     #                  expression? ";"
@@ -252,25 +243,21 @@ class Parser:
             increment = self.expression()
         self.consume(TokenType.RIGHT_PAREN, "Expect ')' after for clauses.")
 
-        try:
-            self.loop_depth += 1
-            body = self.statement()
+        body = self.statement()
 
-            if increment is not None:
-                body = stmt_ast.Block([body, stmt_ast.Expression(increment)])
+        if increment is not None:
+            body = stmt_ast.Block([body, stmt_ast.Expression(increment)])
 
-            if condition is None:
-                condition = expr_ast.Literal(True)
+        if condition is None:
+            condition = expr_ast.Literal(True)
 
-            result: stmt_ast.While | stmt_ast.Block = stmt_ast.While(
-                condition, body
-            )
-            if initializer is not None:
-                result = stmt_ast.Block([initializer, result])
+        result: stmt_ast.While | stmt_ast.Block = stmt_ast.While(
+            condition, body
+        )
+        if initializer is not None:
+            result = stmt_ast.Block([initializer, result])
 
-            return result
-        finally:
-            self.loop_depth -= 1
+        return result
 
     # ifStmt         → "if" "(" expression ")" statement
     #                ( "else" statement )? ;

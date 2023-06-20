@@ -96,7 +96,7 @@ if __name__ == "__main__":
         "Return": ('keyword: Token', 'value: typing.Optional[Expr]'),
         "Var": ('name: Token', "initializer: typing.Optional[Expr]"),
         "While": ('condition: Expr', 'body: Stmt'),
-        "Break": ()
+        "Break": 'keyword: Token'
     }
 
     define_ast("Expr", expressions)
