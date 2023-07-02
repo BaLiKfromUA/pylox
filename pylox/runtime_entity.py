@@ -46,9 +46,23 @@ class LoxFunction(LoxCallable):
         return f"<fn {self.declaration.name.lexeme}>"
 
 
-class LoxClass:
+class LoxClass(LoxCallable):
     def __init__(self, name: str):
         self.name = name
 
+    def call(self, interpreter, args: list) -> typing.Any:
+        return LoxInstance(self)
+
+    def arity(self) -> int:
+        return 0
+
     def __str__(self):
         return self.name
+
+
+class LoxInstance:
+    def __init__(self, lox_class: LoxClass):
+        self.lox_class = lox_class
+
+    def __str__(self):
+        return f"{self.lox_class.name} instance"
