@@ -95,6 +95,7 @@ if __name__ == "__main__":
         "Print": 'expr : Expr',
         "Return": ('keyword: Token', 'value: typing.Optional[Expr]'),
         "Var": ('name: Token', "initializer: typing.Optional[Expr]"),
+        "Class": ('name: Token', 'methods: typing.List[Function]'),
         "While": ('condition: Expr', 'body: Stmt'),
         "Break": 'keyword: Token'
     }

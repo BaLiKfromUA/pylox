@@ -170,3 +170,8 @@ class Resolver(ExprVisitor, StmtVisitor):
                 stmt.keyword, "Must be inside a loop to use 'break'."
             )
         return None
+
+    def visit_class_stmt(self, stmt: stmt_ast.Class) -> typing.Any:
+        self.declare(stmt.name)
+        self.define(stmt.name)
+        return None

@@ -43,4 +43,12 @@ class LoxFunction(LoxCallable):
         return len(self.declaration.params)
 
     def __str__(self):
-        return f"<fn {self._declaration.name.lexeme}>"
+        return f"<fn {self.declaration.name.lexeme}>"
+
+
+class LoxClass:
+    def __init__(self, name: str):
+        self.name = name
+
+    def __str__(self):
+        return self.name

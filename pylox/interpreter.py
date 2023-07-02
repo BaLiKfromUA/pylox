@@ -13,7 +13,7 @@ from pylox.stmt import Stmt, StmtVisitor
 
 
 class Interpreter(ExprVisitor, StmtVisitor):
-    def __init__(self):
+    def __init__(self) -> None:
         self.globals = Environment()
         self.locals: typing.Dict[Expr, int] = {}
         self.environment = self.globals
@@ -44,6 +44,12 @@ class Interpreter(ExprVisitor, StmtVisitor):
         if stmt.value is not None:
             value = self.evaluate(stmt.value)
         raise runtime.Return(value)
+
+    def visit_class_stmt(self, stmt: stmt_ast.Class) -> typing.Any:
+        self.environment.define(stmt.name.lexeme, None)
+        lox_class = runtime.LoxClass(stmt.name.lexeme)
+        self.environment.assign(stmt.name, lox_class)
+        return None
 
     def visit_function_stmt(self, stmt: stmt_ast.Function) -> typing.Any:
         function = LoxFunction(stmt, self.environment)

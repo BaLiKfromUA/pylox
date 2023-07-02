@@ -37,6 +37,10 @@ class StmtVisitor(ABC):
         pass
 
     @abstractmethod
+    def visit_class_stmt(self, stmt) -> typing.Any:
+        pass
+
+    @abstractmethod
     def visit_while_stmt(self, stmt) -> typing.Any:
         pass
 
@@ -128,6 +132,16 @@ class Var(Stmt):
 
     def accept(self, visitor: StmtVisitor) -> typing.Any:
         return visitor.visit_var_stmt(self)
+
+
+class Class(Stmt):
+    def __init__(self, name: Token, methods: typing.List[Function]):
+        super().__init__()
+        self.name = name
+        self.methods = methods
+
+    def accept(self, visitor: StmtVisitor) -> typing.Any:
+        return visitor.visit_class_stmt(self)
 
 
 class While(Stmt):
