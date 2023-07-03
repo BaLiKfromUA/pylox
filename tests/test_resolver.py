@@ -55,3 +55,18 @@ def test_if_resolver_handles_break_outside_of_the_loop(interpreter):
     # THEN
     assert not interpreter.called
     assert "Must be inside a loop to use 'break'." in err.value.message
+
+
+@patch("pylox.interpreter")
+def test_if_resolver_handles_return_outside_of_the_loop(interpreter):
+    # GIVEN
+    src = """
+            fun notAMethod() {
+                print this;
+            }
+          """
+    # WHEN
+    with pytest.raises(LoxParseError) as err:
+        run_resolver(src, interpreter)
+    # THEN
+    assert "Can't use 'this' outside of a class." in err.value.message

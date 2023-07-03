@@ -40,6 +40,10 @@ class ExprVisitor(ABC):
         pass
 
     @abstractmethod
+    def visit_this_expr(self, expr) -> typing.Any:
+        pass
+
+    @abstractmethod
     def visit_unary_expr(self, expr) -> typing.Any:
         pass
 
@@ -139,6 +143,15 @@ class Set(Expr):
 
     def accept(self, visitor: ExprVisitor) -> typing.Any:
         return visitor.visit_set_expr(self)
+
+
+class This(Expr):
+    def __init__(self, keyword: Token):
+        super().__init__()
+        self.keyword = keyword
+
+    def accept(self, visitor: ExprVisitor) -> typing.Any:
+        return visitor.visit_this_expr(self)
 
 
 class Unary(Expr):

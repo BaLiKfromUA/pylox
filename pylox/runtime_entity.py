@@ -27,7 +27,7 @@ class LoxCallable(ABC):
 
 
 class LoxFunction(LoxCallable):
-    def __init__(self, declaration: Function, closure: Environment):
+    def __init__(self, declaration: Function, closure: Environment) -> None:
         self.declaration = declaration
         self.closure = closure
 
@@ -41,10 +41,15 @@ class LoxFunction(LoxCallable):
             return return_value.value
         return None
 
+    def bind(self, instance: "LoxInstance") -> "LoxFunction":
+        env = Environment(self.closure)
+        env.define("this", instance)
+        return LoxFunction(self.declaration, env)
+
     def arity(self) -> int:
         return len(self.declaration.params)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"<fn {self.declaration.name.lexeme}>"
 
 
@@ -80,7 +85,7 @@ class LoxInstance:
 
         method = self.lox_class.find_method(name.lexeme)
         if method is not None:
-            return method
+            return method.bind(self)
 
         raise LoxRuntimeError(name, f"Undefined property {name.lexeme}.")
 

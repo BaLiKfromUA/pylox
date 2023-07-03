@@ -134,6 +134,9 @@ class Interpreter(ExprVisitor, StmtVisitor):
         print(self.stringify(value))
         return None
 
+    def visit_this_expr(self, expr: expr_ast.This) -> typing.Any:
+        return self.lookup_variable(expr.keyword, expr)
+
     def visit_assign_expr(self, expr: expr_ast.Assign) -> typing.Any:
         value = self.evaluate(expr.value)
         distance = self.locals.get(expr)

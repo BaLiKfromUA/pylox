@@ -8,9 +8,7 @@ import pytest
 
 from pylox.cli import Lox
 
-EXPECTED_TO_FAIL = [
-    "assignment/to_this.lox",
-]
+EXPECTED_TO_FAIL = []
 
 IGNORE = ["custom/input.lox"]
 
