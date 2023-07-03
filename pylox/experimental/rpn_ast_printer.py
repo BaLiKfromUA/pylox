@@ -36,3 +36,9 @@ class RpnAstPrinter(ast.ExprVisitor):  # pragma: no cover
             # Can't use same symbol for unary and binary.
             op = "~"
         return f"{str(expr.right.accept(self))} {op}"
+
+    def visit_get_expr(self, expr) -> typing.Any:
+        raise NotImplementedError
+
+    def visit_set_expr(self, expr) -> typing.Any:
+        raise NotImplementedError

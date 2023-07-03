@@ -321,7 +321,7 @@ class Parser:
     def expression(self) -> Expr:
         return self.assignment()
 
-    # assignment     → IDENTIFIER "=" assignment
+    # assignment     → ( call "." )? IDENTIFIER "=" assignment
     #                | logic_or ;
     def assignment(self) -> Expr:
         expr = self.or_expression()
@@ -332,6 +332,9 @@ class Parser:
             if isinstance(expr, expr_ast.Variable):
                 name = expr.name
                 return expr_ast.Assign(name, value)
+            elif isinstance(expr, expr_ast.Get):
+                get: expr_ast.Get = expr
+                return expr_ast.Set(get.obj, get.name, value)
             else:
                 raise self.error(equals, "Invalid assignment target.")
 
@@ -417,13 +420,18 @@ class Parser:
 
         return self.call()
 
-    # call           → primary ( "(" arguments? ")" )* ;
+    # call           → primary ( "(" arguments? ")" | "." IDENTIFIER )* ;
     def call(self) -> Expr:
         expr = self.primary()
 
         while True:
             if self.match(TokenType.LEFT_PAREN):
                 expr = self.parse_arguments(expr)
+            elif self.match(TokenType.DOT):
+                name = self.consume(
+                    TokenType.IDENTIFIER, "Expect property name after '.'."
+                )
+                expr = expr_ast.Get(expr, name)
             else:
                 break
 

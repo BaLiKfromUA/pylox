@@ -78,18 +78,20 @@ def define_visitor(file, base_name, types):
 
 if __name__ == "__main__":
     expressions = {
-        "Assign": ('name : Token', 'value : Expr'),
-        "Binary": ('left : Expr', 'operator : Token', 'right : Expr'),
-        "Call": ('callee : Expr', 'paren : Token', "arguments : typing.List[Expr]"),
-        "Grouping": 'expr : Expr',
-        "Literal": 'value : typing.Any',
-        "Logical": ('left : Expr', 'operator : Token', 'right : Expr'),
-        "Unary": ('operator : Token', 'right : Expr'),
-        "Variable": 'name : Token'
+        "Assign": ('name: Token', 'value: Expr'),
+        "Binary": ('left: Expr', 'operator: Token', 'right: Expr'),
+        "Call": ('callee: Expr', 'paren: Token', "arguments: typing.List[Expr]"),
+        "Get": ('obj: Expr', 'name: Token'),
+        "Grouping": 'expr: Expr',
+        "Literal": 'value: typing.Any',
+        "Logical": ('left: Expr', 'operator: Token', 'right: Expr'),
+        "Set": ('obj: Expr', 'name: Token', 'value: Expr'),
+        "Unary": ('operator: Token', 'right: Expr'),
+        "Variable": 'name: Token'
     }
     statements = {
-        "Block": "statements : typing.List[Stmt]",
-        "Expression": 'expr : Expr',
+        "Block": "statements: typing.List[Stmt]",
+        "Expression": 'expr: Expr',
         "Function": ('name: Token', 'params: typing.List[Token]', 'body: typing.List[Stmt]'),
         "If": ('condition: Expr', 'then_branch: Stmt', 'else_branch: typing.Optional[Stmt]'),
         "Print": 'expr : Expr',

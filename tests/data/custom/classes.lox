@@ -1,3 +1,5 @@
+// step 0
+
 class DevonshireCream {
   serveOn() {
     return "Scones";
@@ -5,7 +7,18 @@ class DevonshireCream {
 }
 print DevonshireCream; // expect: DevonshireCream
 
+// step 1
+
 class Bagel {}
 var bagel = Bagel(); // should work without errors
 print bagel; // expect: Bagel instance
 
+// step 2
+
+class Bacon {
+  eat() {
+    print "Crunch crunch crunch!";
+  }
+}
+
+Bacon().eat(); // expect: Crunch crunch crunch!

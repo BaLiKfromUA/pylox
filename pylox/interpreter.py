@@ -47,7 +47,13 @@ class Interpreter(ExprVisitor, StmtVisitor):
 
     def visit_class_stmt(self, stmt: stmt_ast.Class) -> typing.Any:
         self.environment.define(stmt.name.lexeme, None)
-        lox_class = runtime.LoxClass(stmt.name.lexeme)
+
+        methods: typing.Dict[str, runtime.LoxFunction] = {}
+        for method in stmt.methods:
+            function = LoxFunction(method, self.environment)
+            methods[method.name.lexeme] = function
+
+        lox_class = runtime.LoxClass(stmt.name.lexeme, methods)
         self.environment.assign(stmt.name, lox_class)
         return None
 
@@ -156,6 +162,23 @@ class Interpreter(ExprVisitor, StmtVisitor):
 
     def visit_variable_expr(self, expr: expr_ast.Variable) -> typing.Any:
         return self.lookup_variable(expr.name, expr)
+
+    def visit_get_expr(self, expr: expr_ast.Get) -> typing.Any:
+        obj = self.evaluate(expr.obj)
+        if isinstance(obj, runtime.LoxInstance):
+            return typing.cast(runtime.LoxInstance, obj).get(expr.name)
+
+        raise LoxRuntimeError(expr.name, "Only instances have properties.")
+
+    def visit_set_expr(self, expr: expr_ast.Set) -> typing.Any:
+        obj = self.evaluate(expr.obj)
+
+        if not isinstance(obj, runtime.LoxInstance):
+            raise LoxRuntimeError(expr.name, "Only instances have fields.")
+
+        value = self.evaluate(expr.value)
+        typing.cast(runtime.LoxInstance, obj).set(expr.name, value)
+        return value
 
     def lookup_variable(self, name: Token, expr: Expr) -> typing.Any:
         distance = self.locals.get(expr)

@@ -10,8 +10,6 @@ from pylox.cli import Lox
 
 EXPECTED_TO_FAIL = [
     "assignment/to_this.lox",
-    "number/trailing_dot.lox",
-    "number/decimal_point_at_eof.lox",
 ]
 
 IGNORE = ["custom/input.lox"]

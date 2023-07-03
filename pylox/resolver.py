@@ -12,7 +12,8 @@ from pylox.stmt import Stmt, StmtVisitor
 
 class FunctionType(Enum):
     NONE = (auto(),)
-    FUNCTION = auto()
+    FUNCTION = (auto(),)
+    METHOD = auto()
 
 
 class Resolver(ExprVisitor, StmtVisitor):
@@ -174,4 +175,18 @@ class Resolver(ExprVisitor, StmtVisitor):
     def visit_class_stmt(self, stmt: stmt_ast.Class) -> typing.Any:
         self.declare(stmt.name)
         self.define(stmt.name)
+
+        for method in stmt.methods:
+            declaration = FunctionType.METHOD
+            self.resolve_function(method, declaration)
+
+        return None
+
+    def visit_get_expr(self, expr: expr_ast.Get) -> typing.Any:
+        self.resolve_ast_node(expr.obj)
+        return None
+
+    def visit_set_expr(self, expr: expr_ast.Set) -> typing.Any:
+        self.resolve_ast_node(expr.value)
+        self.resolve_ast_node(expr.obj)
         return None

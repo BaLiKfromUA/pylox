@@ -41,3 +41,9 @@ class AstPrinter(ast.ExprVisitor):  # pragma: no cover
 
         out += ")"
         return out
+
+    def visit_get_expr(self, expr) -> typing.Any:
+        raise NotImplementedError
+
+    def visit_set_expr(self, expr) -> typing.Any:
+        raise NotImplementedError

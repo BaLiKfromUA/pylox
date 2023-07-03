@@ -20,6 +20,10 @@ class ExprVisitor(ABC):
         pass
 
     @abstractmethod
+    def visit_get_expr(self, expr) -> typing.Any:
+        pass
+
+    @abstractmethod
     def visit_grouping_expr(self, expr) -> typing.Any:
         pass
 
@@ -29,6 +33,10 @@ class ExprVisitor(ABC):
 
     @abstractmethod
     def visit_logical_expr(self, expr) -> typing.Any:
+        pass
+
+    @abstractmethod
+    def visit_set_expr(self, expr) -> typing.Any:
         pass
 
     @abstractmethod
@@ -83,6 +91,16 @@ class Call(Expr):
         return visitor.visit_call_expr(self)
 
 
+class Get(Expr):
+    def __init__(self, obj: Expr, name: Token):
+        super().__init__()
+        self.obj = obj
+        self.name = name
+
+    def accept(self, visitor: ExprVisitor) -> typing.Any:
+        return visitor.visit_get_expr(self)
+
+
 class Grouping(Expr):
     def __init__(self, expr: Expr):
         super().__init__()
@@ -110,6 +128,17 @@ class Logical(Expr):
 
     def accept(self, visitor: ExprVisitor) -> typing.Any:
         return visitor.visit_logical_expr(self)
+
+
+class Set(Expr):
+    def __init__(self, obj: Expr, name: Token, value: Expr):
+        super().__init__()
+        self.obj = obj
+        self.name = name
+        self.value = value
+
+    def accept(self, visitor: ExprVisitor) -> typing.Any:
+        return visitor.visit_set_expr(self)
 
 
 class Unary(Expr):
