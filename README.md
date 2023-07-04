@@ -26,8 +26,8 @@ I'm doing this because:
 - [X] Functions
     - [X] Check `return` out of function
 - [X] Classes
-  - [X] Check `this` out of class
-  - [X] Check `return` inside constructor `init`
+    - [X] Check `this` out of class
+    - [X] Check `return` inside constructor `init`
 - [ ] Inheritance
 
 ## Challenges
@@ -63,6 +63,8 @@ I'm doing this because:
   syntax that creates a function without binding it to a name. Add anonymous function syntax to Lox.
 - [ ] Extend the resolver to report an error if a local variable is never used.
 - [ ] Extend the resolver to associate a unique index for each local variable declared in a scope.
+- [ ] Add support of `static` methods
+- [ ] Extend Lox to support `getter` methods.
 
 ## My own design/implementation decisions
 

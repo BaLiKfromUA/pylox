@@ -9,43 +9,43 @@ from pylox.tokens import Token
 
 class StmtVisitor(ABC):
     @abstractmethod
-    def visit_block_stmt(self, stmt) -> typing.Any:
+    def visit_block_stmt(self, stmt: "Block") -> typing.Any:
         pass
 
     @abstractmethod
-    def visit_expression_stmt(self, stmt) -> typing.Any:
+    def visit_expression_stmt(self, stmt: "Expression") -> typing.Any:
         pass
 
     @abstractmethod
-    def visit_function_stmt(self, stmt) -> typing.Any:
+    def visit_function_stmt(self, stmt: "Function") -> typing.Any:
         pass
 
     @abstractmethod
-    def visit_if_stmt(self, stmt) -> typing.Any:
+    def visit_if_stmt(self, stmt: "If") -> typing.Any:
         pass
 
     @abstractmethod
-    def visit_print_stmt(self, stmt) -> typing.Any:
+    def visit_print_stmt(self, stmt: "Print") -> typing.Any:
         pass
 
     @abstractmethod
-    def visit_return_stmt(self, stmt) -> typing.Any:
+    def visit_return_stmt(self, stmt: "Return") -> typing.Any:
         pass
 
     @abstractmethod
-    def visit_var_stmt(self, stmt) -> typing.Any:
+    def visit_var_stmt(self, stmt: "Var") -> typing.Any:
         pass
 
     @abstractmethod
-    def visit_class_stmt(self, stmt) -> typing.Any:
+    def visit_class_stmt(self, stmt: "Class") -> typing.Any:
         pass
 
     @abstractmethod
-    def visit_while_stmt(self, stmt) -> typing.Any:
+    def visit_while_stmt(self, stmt: "While") -> typing.Any:
         pass
 
     @abstractmethod
-    def visit_break_stmt(self, stmt) -> typing.Any:
+    def visit_break_stmt(self, stmt: "Break") -> typing.Any:
         pass
 
 

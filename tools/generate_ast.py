@@ -69,7 +69,9 @@ def define_visitor(file, base_name, types):
         file.write(f'{TAB}@abstractmethod')
         file.write('\n')
         file.write(f'{TAB}')
-        file.write(f"def visit_{t.lower()}_{base_name.lower()}(self, {base_name.lower()}) -> typing.Any:")
+        file.write(
+            f"def visit_{t.lower()}_{base_name.lower()}(self, {base_name.lower()}: '{t}') -> typing.Any:"
+        )
         file.write('\n')
         file.write(f'{TAB * 2}pass')
         file.write('\n')

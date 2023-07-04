@@ -8,47 +8,47 @@ from pylox.tokens import Token
 
 class ExprVisitor(ABC):
     @abstractmethod
-    def visit_assign_expr(self, expr) -> typing.Any:
+    def visit_assign_expr(self, expr: "Assign") -> typing.Any:
         pass
 
     @abstractmethod
-    def visit_binary_expr(self, expr) -> typing.Any:
+    def visit_binary_expr(self, expr: "Binary") -> typing.Any:
         pass
 
     @abstractmethod
-    def visit_call_expr(self, expr) -> typing.Any:
+    def visit_call_expr(self, expr: "Call") -> typing.Any:
         pass
 
     @abstractmethod
-    def visit_get_expr(self, expr) -> typing.Any:
+    def visit_get_expr(self, expr: "Get") -> typing.Any:
         pass
 
     @abstractmethod
-    def visit_grouping_expr(self, expr) -> typing.Any:
+    def visit_grouping_expr(self, expr: "Grouping") -> typing.Any:
         pass
 
     @abstractmethod
-    def visit_literal_expr(self, expr) -> typing.Any:
+    def visit_literal_expr(self, expr: "Literal") -> typing.Any:
         pass
 
     @abstractmethod
-    def visit_logical_expr(self, expr) -> typing.Any:
+    def visit_logical_expr(self, expr: "Logical") -> typing.Any:
         pass
 
     @abstractmethod
-    def visit_set_expr(self, expr) -> typing.Any:
+    def visit_set_expr(self, expr: "Set") -> typing.Any:
         pass
 
     @abstractmethod
-    def visit_this_expr(self, expr) -> typing.Any:
+    def visit_this_expr(self, expr: "This") -> typing.Any:
         pass
 
     @abstractmethod
-    def visit_unary_expr(self, expr) -> typing.Any:
+    def visit_unary_expr(self, expr: "Unary") -> typing.Any:
         pass
 
     @abstractmethod
-    def visit_variable_expr(self, expr) -> typing.Any:
+    def visit_variable_expr(self, expr: "Variable") -> typing.Any:
         pass
 
 
