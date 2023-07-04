@@ -13,6 +13,7 @@ from pylox.stmt import Stmt, StmtVisitor
 class FunctionType(Enum):
     NONE = (auto(),)
     FUNCTION = (auto(),)
+    INITIALIZER = (auto(),)
     METHOD = auto()
 
 
@@ -154,6 +155,10 @@ class Resolver(ExprVisitor, StmtVisitor):
             )
 
         if stmt.value is not None:
+            if self.current_function is FunctionType.INITIALIZER:
+                raise LoxParseError(
+                    stmt.keyword, "Can't return a value from an initializer."
+                )
             self.resolve_ast_node(stmt.value)
         return None
 
@@ -190,6 +195,8 @@ class Resolver(ExprVisitor, StmtVisitor):
 
         for method in stmt.methods:
             declaration = FunctionType.METHOD
+            if method.name.lexeme == "init":
+                declaration = FunctionType.INITIALIZER
             self.resolve_function(method, declaration)
 
         self.end_scope()

@@ -25,7 +25,10 @@ I'm doing this because:
         - [X] Check `break` out of loops
 - [X] Functions
     - [X] Check `return` out of function
-- [ ] Classes
+- [X] Classes
+  - [X] Check `this` out of class
+  - [X] Check `return` inside constructor `init`
+- [ ] Inheritance
 
 ## Challenges
 

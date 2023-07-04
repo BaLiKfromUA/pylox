@@ -50,7 +50,9 @@ class Interpreter(ExprVisitor, StmtVisitor):
 
         methods: typing.Dict[str, runtime.LoxFunction] = {}
         for method in stmt.methods:
-            function = LoxFunction(method, self.environment)
+            function = LoxFunction(
+                method, self.environment, method.name.lexeme == "init"
+            )
             methods[method.name.lexeme] = function
 
         lox_class = runtime.LoxClass(stmt.name.lexeme, methods)
@@ -58,7 +60,7 @@ class Interpreter(ExprVisitor, StmtVisitor):
         return None
 
     def visit_function_stmt(self, stmt: stmt_ast.Function) -> typing.Any:
-        function = LoxFunction(stmt, self.environment)
+        function = LoxFunction(stmt, self.environment, False)
         self.environment.define(stmt.name.lexeme, function)
         return None
 

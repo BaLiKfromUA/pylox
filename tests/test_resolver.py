@@ -70,3 +70,31 @@ def test_if_resolver_handles_return_outside_of_the_loop(interpreter):
         run_resolver(src, interpreter)
     # THEN
     assert "Can't use 'this' outside of a class." in err.value.message
+
+
+@patch("pylox.interpreter")
+def test_if_resolver_handles_return_inside_init(interpreter):
+    # GIVEN
+    valid_code = """
+        class Foo {
+            init() {
+                return;
+            }
+        }
+    """
+
+    invalid_code = """
+        class Foo {
+            init() {
+                return 42;
+            }
+        }
+    """
+
+    # WHEN
+    run_resolver(valid_code, interpreter)  # no errors
+    with pytest.raises(LoxParseError) as err:
+        run_resolver(invalid_code, interpreter)
+
+    # THEN
+    assert "Can't return a value from an initializer." in err.value.message
