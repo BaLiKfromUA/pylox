@@ -138,9 +138,16 @@ class Parser:
             self.synchronize()
             return None
 
-    # classDecl      → "class" IDENTIFIER "{" function* "}" ;
+    # classDecl      → "class" IDENTIFIER ( "<" IDENTIFIER )?
+    #                  "{" function* "}" ;
     def class_declaration(self) -> Stmt:
         name = self.consume(TokenType.IDENTIFIER, "Expect class name")
+
+        superclass = None
+        if self.match(TokenType.LESS):
+            self.consume(TokenType.IDENTIFIER, "Expect superclass name")
+            superclass = expr_ast.Variable(self.previous())
+
         self.consume(TokenType.LEFT_BRACE, "Expect '{' before class body.")
 
         methods: typing.List[stmt_ast.Function] = []
@@ -148,7 +155,7 @@ class Parser:
             methods.append(self.function("method"))
 
         self.consume(TokenType.RIGHT_BRACE, "Expect '}' after class body.")
-        return stmt_ast.Class(name, methods)
+        return stmt_ast.Class(name, superclass, methods)
 
     # funDecl        → "fun" function ;
     # function       → IDENTIFIER "(" parameters? ")" block ;

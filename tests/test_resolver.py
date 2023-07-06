@@ -98,3 +98,15 @@ def test_if_resolver_handles_return_inside_init(interpreter):
 
     # THEN
     assert "Can't return a value from an initializer." in err.value.message
+
+
+@patch("pylox.interpreter")
+def test_if_resolver_checks_class_inheritance_from_itself(interpreter):
+    # GIVEN
+    src = "class Oops < Oops {}"
+    # WHEN
+    with pytest.raises(LoxParseError) as err:
+        run_resolver(src, interpreter)
+
+    # THEN
+    assert "A class can't inherit from itself." in err.value.message

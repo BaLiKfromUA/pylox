@@ -63,8 +63,14 @@ class LoxFunction(LoxCallable):
 
 
 class LoxClass(LoxCallable):
-    def __init__(self, name: str, methods: typing.Dict[str, LoxFunction]):
+    def __init__(
+        self,
+        name: str,
+        superclass: "LoxClass",
+        methods: typing.Dict[str, LoxFunction],
+    ):
         self.name = name
+        self.superclass = superclass
         self.methods = methods
 
     def call(self, interpreter, args: list) -> typing.Any:
@@ -85,6 +91,9 @@ class LoxClass(LoxCallable):
     def find_method(self, name: str) -> typing.Optional[LoxFunction]:
         if name in self.methods:
             return self.methods[name]
+
+        if self.superclass is not None:
+            return self.superclass.find_method(name)
 
         return None
 

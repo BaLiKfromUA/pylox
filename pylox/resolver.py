@@ -190,6 +190,14 @@ class Resolver(ExprVisitor, StmtVisitor):
         self.declare(stmt.name)
         self.define(stmt.name)
 
+        if stmt.superclass is not None:
+            if stmt.superclass.name.lexeme == stmt.name.lexeme:
+                raise LoxParseError(
+                    stmt.superclass.name, "A class can't inherit from itself."
+                )
+
+            self.resolve_ast_node(stmt.superclass)
+
         self.begin_scope()
         self.scopes[-1]["this"] = True
 

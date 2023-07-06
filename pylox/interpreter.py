@@ -46,6 +46,14 @@ class Interpreter(ExprVisitor, StmtVisitor):
         raise runtime.Return(value)
 
     def visit_class_stmt(self, stmt: stmt_ast.Class) -> typing.Any:
+        superclass = None
+        if stmt.superclass is not None:
+            superclass = self.evaluate(stmt.superclass)
+            if not isinstance(superclass, runtime.LoxClass):
+                raise LoxRuntimeError(
+                    stmt.superclass.name, "Superclass must be a class."
+                )
+
         self.environment.define(stmt.name.lexeme, None)
 
         methods: typing.Dict[str, runtime.LoxFunction] = {}
@@ -55,7 +63,11 @@ class Interpreter(ExprVisitor, StmtVisitor):
             )
             methods[method.name.lexeme] = function
 
-        lox_class = runtime.LoxClass(stmt.name.lexeme, methods)
+        lox_class = runtime.LoxClass(
+            stmt.name.lexeme,
+            typing.cast(runtime.LoxClass, superclass),
+            methods,
+        )
         self.environment.assign(stmt.name, lox_class)
         return None
 

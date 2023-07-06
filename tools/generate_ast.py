@@ -10,7 +10,7 @@ def define_ast(base_name, types):
     file.write('import typing\n')
     file.write('from abc import ABC, abstractmethod\n\n')
     if base_name == "Stmt":
-        file.write('from pylox.expr import Expr\n')
+        file.write('from pylox.expr import Expr, Variable\n')
     file.write('from pylox.tokens import Token\n')
     # VISITOR
     define_visitor(file, base_name, types)
@@ -100,7 +100,7 @@ if __name__ == "__main__":
         "Print": 'expr : Expr',
         "Return": ('keyword: Token', 'value: typing.Optional[Expr]'),
         "Var": ('name: Token', "initializer: typing.Optional[Expr]"),
-        "Class": ('name: Token', 'methods: typing.List[Function]'),
+        "Class": ('name: Token', 'superclass: typing.Optional[Variable]', 'methods: typing.List[Function]'),
         "While": ('condition: Expr', 'body: Stmt'),
         "Break": 'keyword: Token'
     }
