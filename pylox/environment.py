@@ -7,7 +7,7 @@ from pylox.tokens import Token
 class Environment:
     def __init__(self, enclosing=None) -> None:
         self._values: dict[str, typing.Any] = {}
-        self._enclosing = enclosing
+        self.enclosing = enclosing
 
     def define(self, name: str, value: typing.Any) -> None:
         self._values[name] = value
@@ -16,8 +16,8 @@ class Environment:
         if name.lexeme in self._values.keys():
             return self._values[name.lexeme]
 
-        if self._enclosing is not None:
-            return self._enclosing.get(name)
+        if self.enclosing is not None:
+            return self.enclosing.get(name)
 
         raise LoxRuntimeError(name, f"Undefined variable {name.lexeme}.")
 
@@ -26,8 +26,8 @@ class Environment:
             self._values[name.lexeme] = value
             return
 
-        if self._enclosing is not None:
-            self._enclosing.assign(name, value)
+        if self.enclosing is not None:
+            self.enclosing.assign(name, value)
             return
 
         raise LoxRuntimeError(name, f"Undefined variable {name.lexeme}.")
@@ -43,6 +43,6 @@ class Environment:
     def ancestor(self, distance: int):
         env = self
         while distance > 0:
-            env = env._enclosing
+            env = env.enclosing
             distance -= 1
         return env

@@ -28,7 +28,7 @@ I'm doing this because:
 - [X] Classes
     - [X] Check `this` out of class
     - [X] Check `return` inside constructor `init`
-- [ ] Inheritance
+- [X] Inheritance
 
 ## Challenges
 

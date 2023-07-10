@@ -110,3 +110,28 @@ def test_if_resolver_checks_class_inheritance_from_itself(interpreter):
 
     # THEN
     assert "A class can't inherit from itself." in err.value.message
+
+
+@patch("pylox.interpreter")
+@pytest.mark.parametrize(
+    "src",
+    [
+        """
+    class Eclair {
+        cook() {
+            super.cook();
+            print "Pipe full of crème pâtissière.";
+        }
+    }
+    """,
+        "super.notEvenInAClass();",
+    ],
+)
+def test_if_resolver_handles_incorrect_usage_of_super_keyword(
+    interpreter, src: str
+):
+    # WHEN
+    with pytest.raises(LoxParseError) as err:
+        run_resolver(src, interpreter)
+    # THEN
+    assert "Can't use 'super'" in err.value.message

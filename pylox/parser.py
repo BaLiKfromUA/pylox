@@ -464,7 +464,8 @@ class Parser:
         )
         return expr_ast.Call(callee, paren, arguments)
 
-    # primary        → NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")"  | IDENTIFIER ;
+    # primary        → NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")"
+    # | IDENTIFIER | "super" "." IDENTIFIER;
     def primary(self) -> Expr:
         if self.match(TokenType.FALSE):
             return expr_ast.Literal(False)
@@ -486,6 +487,14 @@ class Parser:
             expr = self.expression()
             self.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.")
             return expr_ast.Grouping(expr)
+
+        if self.match(TokenType.SUPER):
+            keyword = self.previous()
+            self.consume(TokenType.DOT, "Expect '.' after 'super'.")
+            method = self.consume(
+                TokenType.IDENTIFIER, "Expect superclass method name."
+            )
+            return expr_ast.Super(keyword, method)
 
         # Error handling
         if self.match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL):

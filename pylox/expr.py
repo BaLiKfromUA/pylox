@@ -40,6 +40,10 @@ class ExprVisitor(ABC):
         pass
 
     @abstractmethod
+    def visit_super_expr(self, expr: "Super") -> typing.Any:
+        pass
+
+    @abstractmethod
     def visit_this_expr(self, expr: "This") -> typing.Any:
         pass
 
@@ -143,6 +147,16 @@ class Set(Expr):
 
     def accept(self, visitor: ExprVisitor) -> typing.Any:
         return visitor.visit_set_expr(self)
+
+
+class Super(Expr):
+    def __init__(self, keyword: Token, method: Token):
+        super().__init__()
+        self.keyword = keyword
+        self.method = method
+
+    def accept(self, visitor: ExprVisitor) -> typing.Any:
+        return visitor.visit_super_expr(self)
 
 
 class This(Expr):

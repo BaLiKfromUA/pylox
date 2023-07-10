@@ -56,6 +56,10 @@ class Interpreter(ExprVisitor, StmtVisitor):
 
         self.environment.define(stmt.name.lexeme, None)
 
+        if stmt.superclass is not None:
+            self.environment = Environment(enclosing=self.environment)
+            self.environment.define("super", superclass)
+
         methods: typing.Dict[str, runtime.LoxFunction] = {}
         for method in stmt.methods:
             function = LoxFunction(
@@ -68,6 +72,10 @@ class Interpreter(ExprVisitor, StmtVisitor):
             typing.cast(runtime.LoxClass, superclass),
             methods,
         )
+
+        if superclass is not None:
+            self.environment = self.environment.enclosing
+
         self.environment.assign(stmt.name, lox_class)
         return None
 
@@ -147,6 +155,24 @@ class Interpreter(ExprVisitor, StmtVisitor):
         value = self.evaluate(stmt.expr)
         print(self.stringify(value))
         return None
+
+    def visit_super_expr(self, expr: expr_ast.Super) -> typing.Any:
+        distance = self.locals[expr]
+
+        superclass = typing.cast(
+            runtime.LoxClass, self.environment.get_at(distance, "super")
+        )
+        obj = typing.cast(
+            runtime.LoxInstance, self.environment.get_at(distance - 1, "this")
+        )
+
+        method = superclass.find_method(expr.method.lexeme)
+        if method is None:
+            raise LoxRuntimeError(
+                expr.method, f"Undefined property '{expr.method.lexeme}'."
+            )
+
+        return method.bind(obj)
 
     def visit_this_expr(self, expr: expr_ast.This) -> typing.Any:
         return self.lookup_variable(expr.keyword, expr)

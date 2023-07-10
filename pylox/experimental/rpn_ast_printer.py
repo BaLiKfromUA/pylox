@@ -45,3 +45,6 @@ class RpnAstPrinter(ast.ExprVisitor):  # pragma: no cover
 
     def visit_this_expr(self, expr) -> typing.Any:
         raise NotImplementedError
+
+    def visit_super_expr(self, expr) -> typing.Any:
+        raise NotImplementedError
