@@ -19,7 +19,7 @@ class Environment:
         if self.enclosing is not None:
             return self.enclosing.get(name)
 
-        raise LoxRuntimeError(name, f"Undefined variable {name.lexeme}.")
+        raise LoxRuntimeError(name, f"Undefined variable '{name.lexeme}'.")
 
     def assign(self, name: Token, value: typing.Any) -> None:
         if name.lexeme in self._values.keys():
@@ -30,7 +30,7 @@ class Environment:
             self.enclosing.assign(name, value)
             return
 
-        raise LoxRuntimeError(name, f"Undefined variable {name.lexeme}.")
+        raise LoxRuntimeError(name, f"Undefined variable '{name.lexeme}'.")
 
     def get_at(self, distance: int, name: str) -> typing.Any:
         return self.ancestor(distance)._values.get(name)

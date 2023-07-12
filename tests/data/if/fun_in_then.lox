@@ -1,0 +1,2 @@
+// expect: line 2: Expect expression
+if (true) fun foo() {}

@@ -6,6 +6,9 @@ from pylox.error import LoxRuntimeError
 from pylox.scanner import Token
 from pylox.stmt import Function
 
+if typing.TYPE_CHECKING:
+    from pylox.interpreter import Interpreter
+
 
 class BreakException(RuntimeError):
     pass
@@ -18,7 +21,9 @@ class Return(RuntimeError):
 
 class LoxCallable(ABC):
     @abstractmethod
-    def call(self, interpreter, args) -> typing.Any:
+    def call(
+        self, interpreter: "Interpreter", args: typing.List[typing.Any]
+    ) -> typing.Any:
         pass
 
     @abstractmethod
@@ -34,7 +39,7 @@ class LoxFunction(LoxCallable):
         self.closure = closure
         self.is_init = is_init
 
-    def call(self, interpreter, args: list) -> typing.Any:
+    def call(self, interpreter: "Interpreter", args: list) -> typing.Any:
         env = Environment(self.closure)
         for i in range(len(self.declaration.params)):
             env.define(self.declaration.params[i].lexeme, args[i])
@@ -68,12 +73,12 @@ class LoxClass(LoxCallable):
         name: str,
         superclass: "LoxClass",
         methods: typing.Dict[str, LoxFunction],
-    ):
+    ) -> None:
         self.name = name
         self.superclass = superclass
         self.methods = methods
 
-    def call(self, interpreter, args: list) -> typing.Any:
+    def call(self, interpreter: "Interpreter", args: list) -> typing.Any:
         instance = LoxInstance(self)
         initializer = self.find_method("init")
         if initializer is not None:
@@ -97,7 +102,7 @@ class LoxClass(LoxCallable):
 
         return None
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
 
@@ -106,7 +111,7 @@ class LoxInstance:
         self.lox_class = lox_class
         self.fields: typing.Dict[str, typing.Any] = {}
 
-    def get(self, name: Token):
+    def get(self, name: Token) -> typing.Any:
         if name.lexeme in self.fields:
             return self.fields.get(name.lexeme)
 
@@ -114,10 +119,10 @@ class LoxInstance:
         if method is not None:
             return method.bind(self)
 
-        raise LoxRuntimeError(name, f"Undefined property {name.lexeme}.")
+        raise LoxRuntimeError(name, f"Undefined property '{name.lexeme}'.")
 
-    def set(self, name: Token, value: typing.Any):
+    def set(self, name: Token, value: typing.Any) -> None:
         self.fields[name.lexeme] = value
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.lox_class.name} instance"

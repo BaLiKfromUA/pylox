@@ -169,7 +169,7 @@ class Parser:
             while is_comma:
                 if len(parameters) >= 255:
                     raise self.error(
-                        self.peek(), "Can't have more than 255 arguments."
+                        self.peek(), "Can't have more than 255 parameters."
                     )
                 parameters.append(
                     self.consume(TokenType.IDENTIFIER, "Expect parameter name")

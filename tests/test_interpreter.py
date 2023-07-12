@@ -74,7 +74,7 @@ def test_if_interpreter_works_as_expected(file: str) -> None:
     ],
 )
 def test_if_interpreter_works_as_expected_in_repl_mode(ignored) -> None:
-    expected = ["Hello, World!", "line 1: Undefined variable no_var.", "6"]
+    expected = ["Hello, World!", "line 1: Undefined variable 'no_var'.", "6"]
 
     with io.StringIO() as buf, redirect_stdout(buf), redirect_stderr(buf):
         # WHEN

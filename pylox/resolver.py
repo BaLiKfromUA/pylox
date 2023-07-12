@@ -24,7 +24,7 @@ class ClassType(Enum):
 
 
 class Resolver(ExprVisitor, StmtVisitor):
-    def __init__(self, interpreter: Interpreter):
+    def __init__(self, interpreter: Interpreter) -> None:
         self.interpreter = interpreter
         self.scopes: typing.List[typing.Dict[str, bool]] = []
         self.current_function = FunctionType.NONE
